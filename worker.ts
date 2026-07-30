@@ -11,14 +11,14 @@ interface Env {
   REFRESH_TOKEN: string;
 }
 
-const LANDING_HOST = "italgres-orlando.com";
-const CATALOG_HOST = "catalog.italgres-orlando.com";
+const LANDING_HOST = "italgresorlando.com";
+const CATALOG_HOST = "catalog.italgresorlando.com";
 
 // Allow both domains + dev subdomain
 const ALLOWED_ORIGINS = [
-  "https://italgres-orlando.com",
-  "https://catalog.italgres-orlando.com",
-  "https://italgresorlando.andres-f72.workers.dev",
+  "https://italgresorlando.com",
+  "https://catalog.italgresorlando.com"
+  //"https://italgresorlando.andres-f72.workers.dev",
 ];
 
 function getCors(origin: string) {
