@@ -22,9 +22,9 @@ const ALLOWED_ORIGINS = [
 ];
 
 function getCors(origin: string) {
-  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[2];
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : null;
   return {
-    "Access-Control-Allow-Origin": allowed,
+    "Access-Control-Allow-Origin": allowed || "null",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
@@ -170,7 +170,7 @@ async function handleCollections(request: Request, env: Env, CORS: Record<string
     });
   } catch (err) {
     console.error("Collections error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
+    return new Response(JSON.stringify({ error: "Failed to load catalog. Please try again." }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...CORS },
     });
@@ -202,7 +202,7 @@ async function handleChat(request: Request, env: Env, CORS: Record<string,string
     });
   } catch (err) {
     console.error("Chat error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
+    return new Response(JSON.stringify({ error: "Something went wrong. Please try again." }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...CORS, ...SECURITY_HEADERS },
     });
