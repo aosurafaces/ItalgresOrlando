@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italgres Orlando</title>
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF9F6;
+    --white: #ffffff;
+    --ink: #1C1A17;
+    --gold: #f39b34;
+    --gray: #6b6762;
+    --light: #E8E4DC;
+  }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--cream);
+    border-bottom: 1px solid var(--light);
+  }
+
+  .header-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .logo-bar {
+    width: 1px;
+    height: 18px;
+    background: var(--gold);
+  }
+
+  .logo-city {
+    color: var(--gray);
+    font-weight: 400;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  nav a:hover { color: var(--ink); }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-gold { background: var(--gold); color: #000; }
+  .btn-gold:hover { background: #e28b24; }
+  .btn-ink { background: var(--ink); color: #fff; }
+  .btn-ink:hover { background: #2e2b27; }
+  .btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .btn-outline:hover { background: var(--ink); color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 80px 32px 80px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--gray);
+    line-height: 1.75;
+    max-width: 440px;
+    margin-bottom: 36px;
+  }
+
+  .hero-actions { display: flex; gap: 12px; }
+
+  /* Tile mosaic — the one intentional design element */
+  .tile-mosaic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 200px 200px;
+    gap: 4px;
+  }
+
+  .tile-mosaic .t { transition: opacity 0.3s; }
+  .tile-mosaic .t:hover { opacity: 0.85; }
+
+
+  /* ── STRIP ── */
+  .strip {
+    background: var(--ink);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .strip-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0;
+    gap: 24px;
+  }
+
+  .strip-text {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .strip-text strong {
+    display: block;
+    color: #fff;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 80px 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--light);
+    border-top: 1px solid var(--light);
+    border-bottom: 1px solid var(--light);
+  }
+
+  .feature {
+    background: var(--cream);
+    padding: 40px 36px;
+  }
+
+  .feature-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .feature h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .feature p {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  /* ── ABOUT ── */
+  .about {
+    background: var(--white);
+    border-top: 1px solid var(--light);
+    border-bottom: 1px solid var(--light);
+    padding: 80px 32px;
+    text-align: center;
+  }
+
+  .about-inner { max-width: 620px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .about h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+
+  .about p { font-size: 15px; color: var(--gray); line-height: 1.8; }
+
+  /* ── CONTACT ── */
+  .contact {
+    background: var(--ink);
+    color: #fff;
+    padding: 80px 32px;
+    text-align: center;
+  }
+
+  .contact .section-label { color: var(--gold); }
+
+  .contact h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+
+  .contact p {
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    max-width: 440px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  .contact-meta {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+  }
+
+  .contact-meta div {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .contact-meta strong {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 6px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 24px 32px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--gray);
+    border-top: 1px solid var(--light);
+  }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    width: 100%;
+    max-width: 500px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .modal-head {
+    background: var(--ink);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-head span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.45);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .modal-close:hover { color: #fff; }
+
+  .modal-body { padding: 28px 24px; }
+
+  .modal-body > p {
+    font-size: 14px;
+    color: var(--gray);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--light);
+    background: #fff;
+    font-size: 14px;
+    color: var(--ink);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus { border-color: var(--gold); }
+
+  .field textarea { resize: vertical; min-height: 90px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .form-submit {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px;
+    background: var(--gold);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .form-submit:hover { background: #e28b24; }
+
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 48px 20px;
+  }
+
+  .form-success .check {
+    width: 48px;
+    height: 48px;
+    background: rgba(243,155,52,0.1);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .form-success h4 { font-size: 18px; margin-bottom: 10px; }
+  .form-success p { font-size: 14px; color: var(--gray); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; padding: 48px 20px; }
+    .hero h1 { font-size: 30px; }
+    .tile-mosaic { grid-template-rows: 160px 160px; }
+    .features { grid-template-columns: 1fr; padding: 0; }
+    .feature { padding: 32px 24px; }
+    .strip-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+    nav { display: none; }
+    .header-inner { padding: 0 20px; }
+    .about, .contact { padding: 60px 20px; }
+    .contact-meta { gap: 28px; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  /* ── SPINNER / PAGE LOADER ── */
+  #page-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease;
+  }
+
+  #page-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .spinner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 24px;
+  }
+
+  .spinner-tile {
+    overflow: hidden;
+    opacity: 0;
+    animation: tile-fade 2.4s ease-in-out infinite;
+  }
+
+  .spinner-tile:nth-child(1) { animation-delay: 0s; }
+  .spinner-tile:nth-child(2) { animation-delay: 0.2s; }
+  .spinner-tile:nth-child(3) { animation-delay: 0.4s; }
+  .spinner-tile:nth-child(4) { animation-delay: 0.6s; }
+
+  .spinner-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @keyframes tile-fade {
+    0%   { opacity: 0; transform: scale(0.95); }
+    20%  { opacity: 1; transform: scale(1); }
+    80%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.95); }
+  }
+
+  .spinner-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+</style>
+</head>
+<body>
+
+
+<!-- PAGE LOADER -->
+<div id="page-loader">
+  <div class="spinner-grid">
+    <div class="spinner-tile"><img src="/spinner/1.jpg" alt=""></div>
+    <div class="spinner-tile"><img src="/spinner/2.jpg" alt=""></div>
+    <div class="spinner-tile"><img src="/spinner/3.jpg" alt=""></div>
+    <div class="spinner-tile"><img src="/spinner/4.jpg" alt=""></div>
+  </div>
+  <div class="spinner-label">Italgres Orlando</div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      ITALGRES
+      <div class="logo-bar"></div>
+      <span class="logo-city">ORLANDO</span>
+    </div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="btn btn-gold" onclick="openModal()">Book Consultation</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>Premium European Tile &amp; Stone</h1>
+    <p>Exclusive porcelain, marble, and natural stone from leading European manufacturers. Available for residential and commercial projects throughout Central Florida.</p>
+    <div class="hero-actions">
+      <a href="https://catalog.italgres-orlando.com/" class="btn btn-gold">View Catalog</a>
+    </div>
+  </div>
+  <div class="tile-mosaic">
+    <div class="t" style="background:#f0ece3"><img src="/spinner/1.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'"></div>
+    <div class="t" style="background:#1a1814"><img src="/spinner/2.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'"></div>
+    <div class="t" style="background:#8c7d6a"><img src="/spinner/3.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'"></div>
+    <div class="t" style="background:#d4cec4"><img src="/spinner/4.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'"></div>
+  </div>
+</section>
+
+
+
+<div class="features">
+  <div class="feature">
+    <span class="feature-num">Collections</span>
+    <h3>1,000+ European Products</h3>
+    <p>Curated porcelain, marble, travertine, and natural stone from Fioranese, Cerdomus, Emil Group, and more.</p>
+  </div>
+  <div class="feature">
+    <span class="feature-num">Inventory</span>
+    <h3>In-Stock, Orlando-Based</h3>
+    <p>Local warehouse with real-time lot availability. Browse and reserve before stock moves.</p>
+  </div>
+  <div class="feature">
+    <span class="feature-num">Access</span>
+    <h3>Private Client Catalog</h3>
+    <p>Carlos works directly with designers, contractors, and homeowners. Catalog access is by invitation.</p>
+  </div>
+</div>
+
+
+
+<footer>
+  &copy; 2026 Italgres Orlando — AOSurfaces Group LLC
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal" onclick="handleBackdrop(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span>Book a Consultation</span>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="form-view">
+        <p>Tell us about your project and Carlos will be in touch within one business day.</p>
+        <form onsubmit="submitForm(event)">
+          <div class="field-row">
+            <div class="field">
+              <label>First Name *</label>
+              <input type="text" name="first_name" required placeholder="Jane">
+            </div>
+            <div class="field">
+              <label>Last Name *</label>
+              <input type="text" name="last_name" required placeholder="Smith">
+            </div>
+          </div>
+          <div class="field">
+            <label>Email *</label>
+            <input type="email" name="email" required placeholder="jane@example.com">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" name="phone" placeholder="(407) 000-0000">
+          </div>
+          <div class="field">
+            <label>Project Type</label>
+            <select name="project_type">
+              <option value="">Select...</option>
+              <option>Residential — Kitchen</option>
+              <option>Residential — Bathroom</option>
+              <option>Residential — Full Home</option>
+              <option>Commercial</option>
+              <option>Outdoor / Pool</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>About Your Project</label>
+            <textarea name="message" placeholder="Square footage, timeline, style preferences..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Request</button>
+        </form>
+      </div>
+      <div class="form-success" id="form-success">
+        <div class="check">✓</div>
+        <h4>Request Received</h4>
+        <p>Carlos will be in touch within one business day to schedule your consultation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  // Hide page loader
+  window.addEventListener('load', function() {
+    const loader = document.getElementById('page-loader');
+    setTimeout(function() {
+      loader.classList.add('hidden');
+      setTimeout(function() { loader.style.display = 'none'; }, 600);
+    }, 800);
+  });
+
+  function openModal() {
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function handleBackdrop(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function submitForm(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: 'dbbc517d-3d56-4812-9c20-81b9ea7d9534',
+        subject: 'New Consultation Request — Italgres Orlando',
+        from_name: fd.get('first_name') + ' ' + fd.get('last_name'),
+        email: fd.get('email'),
+        phone: fd.get('phone') || 'Not provided',
+        project_type: fd.get('project_type') || 'Not specified',
+        message: fd.get('message') || 'No message',
+      })
+    })
+    .then(r => r.json())
+    .then(r => {
+      if (r.success) {
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      }
+    })
+    .catch(() => alert('Something went wrong. Please try again.'));
+  }
+</script>
+
+</body>
+</html>

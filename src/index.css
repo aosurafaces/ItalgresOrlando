@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-gold: #f39b34;
+  --color-gold-light: #dfcbb0;
+  --color-dark-bg: #0a0a0a;
+  --color-dark-panel: #111111;
+  --color-dark-card: #1a1a1a;
+  --color-off-white: #e8e2d9;
+
+  --color-neutral-100: #f0ede8;
+  --color-neutral-200: #e0ddd8;
+  --color-neutral-300: #c8c4be;
+  --color-neutral-400: #6b6762;
+  --color-neutral-500: #4a4844;
+  --color-neutral-600: #323028;
+  --color-neutral-700: #222018;
+  --color-neutral-800: #141210;
+  --color-neutral-900: #080604;
+}
+
+html {
+  font-size: 20px;
+}
+
+body {
+  background-color: #FAF9F6;
+  color: #080604;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Target text elements specifically — not all elements */
+p, span, div, li, td, th, label, input, textarea, select {
+  color: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #080604;
+}
+
+/* Tailwind neutral overrides */
+.text-neutral-400 { color: #6b6762 !important; }
+.text-neutral-500 { color: #4a4844 !important; }
+.text-neutral-600 { color: #323028 !important; }
+.text-neutral-700 { color: #222018 !important; }
+.text-neutral-800 { color: #141210 !important; }
+
+/* Gold */
+.text-\[#f39b34\] { color: #f39b34 !important; }
+
+/* White text on dark backgrounds — use data attribute or class */
+.text-on-dark { color: #ffffff !important; }
+.text-on-dark-muted { color: rgba(255,255,255,0.75) !important; }
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #FAF9F6; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E2DC; border-radius: 2px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #f39b34; }

@@ -1,0 +1,13 @@
+name = "italgresorlando"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+main = "worker.ts"
+assets = { directory = "./dist", binding = "ASSETS" }
+
+[ai]
+binding = "AI"
+
+[[kv_namespaces]]
+binding = "CATALOG_CACHE"
+id = "97a08b254a174f6b8374e5b81def7d9d"

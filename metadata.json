@@ -1,0 +1,6 @@
+{
+  "name": "Italgres Orlando",
+  "description": "Luxury tile and surface showroom in Orlando, Florida. Featuring large-format porcelain, architectural collections, and Soren, our interactive AI design concierge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
