@@ -26,21 +26,28 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/book", {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          access_key: "dbbc517d-3d56-4812-9c20-81b9ea7d9534",
+          subject: "New Showroom Consultation Request — Italgres Orlando",
+          from_name: formData.name,
+          email: formData.email,
+          phone: formData.phone || "Not provided",
+          project_type: formData.projectType || "Not specified",
+          preferred_date: formData.date,
+          preferred_time: formData.time,
+          message: formData.notes || "No additional notes",
+        })
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to register booking. Please verify input fields.");
-      }
-
       const data = await response.json();
-      setSubmitResult(data.message);
+      if (!data.success) throw new Error("Submission failed");
+      setSubmitResult("Your consultation request has been received. Carlos will be in touch within one business day.");
     } catch (err: any) {
       console.error("Booking submission error:", err);
-      alert(err.message || "Something went wrong. Please try booking again.");
+      alert("Something went wrong. Please try booking again.");
     } finally {
       setIsSubmitting(false);
     }

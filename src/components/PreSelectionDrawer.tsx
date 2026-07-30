@@ -49,24 +49,31 @@ export default function PreSelectionDrawer({
         quantityType: item.quantityType
       }));
 
-      const response = await fetch("/api/pre-selection", {
+      const slabsSummary = slabsPayload.map(s =>
+        `${s.name} (${s.category}, ${s.finish}) — ${s.quantity} ${s.quantityType}`
+      ).join("\n");
+
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          slabs: slabsPayload
+          access_key: "dbbc517d-3d56-4812-9c20-81b9ea7d9534",
+          subject: `New Material Pre-Selection — ${formData.name} — Italgres Orlando`,
+          from_name: formData.name,
+          email: formData.email,
+          phone: formData.phone || "Not provided",
+          project_type: formData.projectType || "Not specified",
+          notes: formData.notes || "No notes",
+          selected_materials: slabsSummary,
         })
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit material pre-selection. Please verify inputs.");
-      }
-
       const data = await response.json();
+      if (!data.success) throw new Error("Submission failed");
       setSubmitResult({
-        message: data.message,
-        summary: data.summary,
-        emailSimulated: data.emailSimulated
+        message: "Your pre-selection has been sent to Carlos.",
+        summary: slabsSummary,
+        emailSimulated: formData.email
       });
       
       // Clear items upon successful submission
