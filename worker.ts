@@ -1,4 +1,4 @@
-// src/worker.ts — Single Cloudflare Worker entry point
+// src/worker.ts — Single Cloudflare Worker entry point - 
 // Routes: /api/collections → Airtable (KV cached), /api/chat → AI, * → React app
 
 interface Env {
