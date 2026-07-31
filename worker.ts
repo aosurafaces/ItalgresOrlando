@@ -11,13 +11,14 @@ interface Env {
   REFRESH_TOKEN: string;
 }
 
-const LANDING_HOST = "italgresorlando.com";
-const CATALOG_HOST = "catalog.italgresorlando.com";
+//const LANDING_HOST = "italgresorlando.com";
+//const CATALOG_HOST = "catalog.italgresorlando.com";
 
 // Allow both domains + dev subdomain
 const ALLOWED_ORIGINS = [
   "https://italgresorlando.com",
-  "https://catalog.italgresorlando.com"
+  "https://www.italgresorlando.com",
+  //"https://catalog.italgresorlando.com"
   //"https://italgresorlando.andres-f72.workers.dev",
 ];
 
@@ -221,10 +222,10 @@ export default {
     }
 
     // Landing page domain — serve landing.html for all routes
-    if (host === LANDING_HOST || host === `www.${LANDING_HOST}`) {
-      const landingReq = new Request(new URL("/landing.html", request.url).toString(), request);
-      return env.ASSETS.fetch(landingReq);
-    }
+    //if (host === LANDING_HOST || host === `www.${LANDING_HOST}`) {
+     // const landingReq = new Request(new URL("/landing.html", request.url).toString(), request);
+      //return env.ASSETS.fetch(landingReq);
+    //}
 
     // API routes — only available on catalog domain or dev subdomain
     if (url.pathname === "/api/collections" && request.method === "GET") {
