@@ -372,11 +372,11 @@ export default function FeaturedCollections({
 
                 <div className="flex-1 overflow-y-auto">
                   {[
-                    { key: "application", label: "Application", options: ["Wall", "Floor", "Indoor", "Outdoor"], list: selectedApplications, setList: setSelectedApplications },
-                    { key: "finishAndFeel", label: "Finish & Feel", options: ["Smooth Matte", "Polished/High Gloss", "Velvet Silk", "Structured Grip", "Satin Tactile"], list: selectedFinishAndFeels, setList: setSelectedFinishAndFeels },
-                    { key: "colorGroup", label: "Color Group", options: ["White & Cream", "Dark Grey", "Deep Black", "Warm Beige", "Blue and Greens", "Earthy Tones"], list: selectedColorGroups, setList: setSelectedColorGroups },
-                    { key: "sizeFormat", label: "Size & Format", options: ["Porcelain Slabs & Panels"], list: selectedSizeFormats, setList: setSelectedSizeFormats },
-                    { key: "visualLook", label: "Visual Look", options: ["Metal & Oxid Look", "Marble Look", "Stone Look", "Concrete Look", "Wood Look"], list: selectedVisualLooks, setList: setSelectedVisualLooks },
+                    { key: "application", label: "Application", options: [...new Set(collections.flatMap(c => c.applications).filter(Boolean))].sort() as string[], list: selectedApplications, setList: setSelectedApplications },
+                    { key: "finishAndFeel", label: "Finish & Feel", options: [...new Set(collections.map(c => getFinishAndFeel(c)).filter(Boolean))].sort() as string[], list: selectedFinishAndFeels, setList: setSelectedFinishAndFeels },
+                    { key: "colorGroup", label: "Color Group", options: [...new Set(collections.map(c => getColorGroup(c)).filter(Boolean))].sort() as string[], list: selectedColorGroups, setList: setSelectedColorGroups },
+                    { key: "sizeFormat", label: "Size & Format", options: [...new Set(collections.map(c => c.sizeAndFormat).filter(Boolean))].sort() as string[], list: selectedSizeFormats, setList: setSelectedSizeFormats },
+                    { key: "visualLook", label: "Visual Look", options: [...new Set(collections.map(c => getVisualLook(c)).filter(Boolean))].sort() as string[], list: selectedVisualLooks, setList: setSelectedVisualLooks },
                   ].map(({ key, label, options, list, setList }) => (
                     <div key={key} className="border-b border-neutral-100">
                       <button
