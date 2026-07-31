@@ -576,10 +576,6 @@ export default function FeaturedCollections({
                           ) : (
                             <div className="w-full h-full" style={{ background: col.backgroundGradient }} />
                           )}
-
-                          {/* Subtle gradient at bottom for name legibility */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
                           {/* Finish tag top-left */}
                           <div className="absolute top-2.5 left-2.5 flex gap-1">
                             <span className="text-[7px] font-mono tracking-widest uppercase bg-black/60 px-1.5 py-0.5 backdrop-blur-sm" style={{color:"#ffffff"}}>
@@ -685,21 +681,7 @@ export default function FeaturedCollections({
                   <X size={15} />
                 </button>
 
-                {/*<div className="relative z-10" />
-
-                 //Live visual details 
-                <div className="relative z-10 text-white">
-                  <span className="text-[9px] tracking-widest font-mono text-[#f39b34] uppercase bg-[#000]/80 px-2 py-1 rounded border border-[#f39b34]/20 inline-block mb-3">
-                    {selectedCollection.category}
-                  </span>
-                  <h3 className="font-serif text-2xl uppercase tracking-wide text-white drop-shadow-md">
-                    {selectedCollection.name}
-                  </h3>
-                  <p className="text-[10px] font-mono text-[#e8e2d9]/60 tracking-wider mt-1.5 uppercase">
-                    Origin Stock · {selectedCollection.origin}
-                  </p>
-                </div>
-              </div>*/}
+          
 
               {/* Right Side: Specifications Panel */}
               <div className="p-6 md:p-8 flex flex-col justify-between h-full bg-[#FAF9F6] overflow-y-auto max-h-[70vh] md:max-h-[90vh]">
