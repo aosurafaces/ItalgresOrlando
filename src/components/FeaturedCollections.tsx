@@ -685,9 +685,9 @@ export default function FeaturedCollections({
                   <X size={15} />
                 </button>
 
-                <div className="relative z-10" />
+                {/*<div className="relative z-10" />
 
-                {/* Live visual details */}
+                 //Live visual details 
                 <div className="relative z-10 text-white">
                   <span className="text-[9px] tracking-widest font-mono text-[#f39b34] uppercase bg-[#000]/80 px-2 py-1 rounded border border-[#f39b34]/20 inline-block mb-3">
                     {selectedCollection.category}
@@ -699,7 +699,7 @@ export default function FeaturedCollections({
                     Origin Stock · {selectedCollection.origin}
                   </p>
                 </div>
-              </div>
+              </div>*/}
 
               {/* Right Side: Specifications Panel */}
               <div className="p-6 md:p-8 flex flex-col justify-between h-full bg-[#FAF9F6] overflow-y-auto max-h-[70vh] md:max-h-[90vh]">
