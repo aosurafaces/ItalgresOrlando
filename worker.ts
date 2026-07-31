@@ -118,7 +118,7 @@ async function fetchFromAirtable(env: Env): Promise<object[]> {
         applications: arr(f[F.application]),
         finishAndFeel: finish,
         colorGroup: str(f[F.colorGroup]) || color,
-        sizeAndFormat: size,
+        sizeAndFormat: str(f["Size  & Format "]) ,
         thickness: str(f[F.thickness]),
         visualLook,
         specificMaterialStyle: str(f[F.specificMaterialStyle]),
