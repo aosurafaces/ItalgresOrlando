@@ -680,6 +680,8 @@ export default function FeaturedCollections({
                 >
                   <X size={15} />
                 </button>
+              </div>
+              {/* Right Side: Specifications Panel */}
 
           
 
