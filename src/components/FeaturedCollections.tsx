@@ -681,9 +681,6 @@ export default function FeaturedCollections({
                   <X size={15} />
                 </button>
               </div>
-              {/* Right Side: Specifications Panel */}
-
-          
 
               {/* Right Side: Specifications Panel */}
               <div className="p-6 md:p-8 flex flex-col justify-between h-full bg-[#FAF9F6] overflow-y-auto max-h-[70vh] md:max-h-[90vh]">
