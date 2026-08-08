@@ -758,16 +758,12 @@ export default function FeaturedCollections({
                   {/* Production Properties List */}
                   <div className="border border-neutral-200/60 p-3.5 rounded bg-white space-y-2.5 mb-6 shadow-sm">
                     <div className="flex justify-between items-center text-[10px] border-b border-neutral-100 pb-1.5">
-                      <span className="text-[#1C1A17]/40 uppercase font-mono">Visual Look:</span>
-                      <span className="text-teal-700 font-sans font-semibold">{selectedCollection.visualLook || getVisualLook(selectedCollection)}</span>
+                      <span className="text-[#1C1A17]/40 uppercase font-mono">Material Style:</span>
+                      <span className="text-teal-700 font-sans font-semibold">{selectedCollection.specificMaterialStyle || getMaterialStyle(selectedCollection)}</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] border-b border-neutral-100 pb-1.5">
-                      <span className="text-[#1C1A17]/40 uppercase font-mono">Finish & Feel:</span>
-                      <span className="text-sky-700 font-sans font-semibold">{selectedCollection.finishAndFeel || getFinishAndFeel(selectedCollection)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[10px] border-b border-neutral-100 pb-1.5">
-                      <span className="text-[#1C1A17]/40 uppercase font-mono">Specific Style:</span>
-                      <span className="text-amber-700 font-sans font-semibold">{selectedCollection.specificMaterialStyle || getMaterialStyle(selectedCollection)}</span>
+                      <span className="text-[#1C1A17]/40 uppercase font-mono">Finish:</span>
+                      <span className="text-sky-700 font-sans font-semibold">{selectedCollection.finish}</span>
                     </div>
 
                     {/* Extra Airtable Custom Fields */}
