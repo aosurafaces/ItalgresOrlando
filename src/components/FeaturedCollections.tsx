@@ -687,11 +687,8 @@ export default function FeaturedCollections({
                 <div>
                   <div className="flex justify-between items-center pb-4 border-b border-neutral-200 mb-6">
                     <div>
-                      <span className="text-[9px] font-mono text-[#f39b34] tracking-widest uppercase block">
-                        LOT NUMBERS SECURED
-                      </span>
-                      <h4 className="font-sans text-xs font-bold text-[#1C1A17] tracking-wider uppercase">
-                        Material Specifications
+                      <h4 className="font-sans text-sm font-bold text-[#1C1A17] tracking-wide">
+                        {selectedCollection.name}
                       </h4>
                     </div>
                     <button
@@ -702,30 +699,19 @@ export default function FeaturedCollections({
                     </button>
                   </div>
 
-                  {/* Lot Description */}
-                  <div className="mb-6">
-                    <p className="text-xs text-[#1C1A17]/75 font-light leading-relaxed">
-                      {selectedCollection.description}
-                    </p>
-                    {selectedCollection.veiningStyle && (
-                      <div className="mt-3.5 p-3 bg-white border border-neutral-100 rounded-sm">
-                        <span className="text-[9px] font-mono text-[#f39b34] uppercase block mb-1">Veining Style Pattern</span>
-                        <p className="text-[11px] text-[#1C1A17]/60 font-sans italic">
-                          "{selectedCollection.veiningStyle}"
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
                   {/* Surface attributes */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="border border-neutral-200/60 p-3 rounded bg-white">
                       <span className="text-[9px] font-mono tracking-widest text-[#1C1A17]/40 uppercase block mb-1">
-                        SURFACE FINISH
+                        AVAILABLE SIZES
                       </span>
-                      <span className="text-xs text-[#f39b34] font-sans font-medium uppercase">
-                        {selectedCollection.finish}
-                      </span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {selectedCollection.formats.map((format) => (
+                          <span key={format} className="text-xs text-[#f39b34] font-sans font-medium uppercase">
+                            {format}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="border border-neutral-200/60 p-3 rounded bg-white">
@@ -735,23 +721,6 @@ export default function FeaturedCollections({
                       <span className="text-xs text-[#1C1A17] font-sans uppercase">
                         {selectedCollection.thickness || getThickness(selectedCollection)}
                       </span>
-                    </div>
-                  </div>
-
-                  {/* Available Formats */}
-                  <div className="mb-6">
-                    <span className="text-[10px] font-mono tracking-widest text-[#1C1A17]/40 uppercase block mb-3">
-                      AVAILABLE SIZES
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCollection.formats.map((format) => (
-                        <span
-                          key={format}
-                          className="px-3 py-1.5 bg-white border border-neutral-200 text-[#1C1A17]/80 font-mono text-[10px] rounded"
-                        >
-                          {format}
-                        </span>
-                      ))}
                     </div>
                   </div>
 
