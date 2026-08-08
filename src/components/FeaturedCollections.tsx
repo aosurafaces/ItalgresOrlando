@@ -741,7 +741,7 @@ export default function FeaturedCollections({
                   {/* Available Formats */}
                   <div className="mb-6">
                     <span className="text-[10px] font-mono tracking-widest text-[#1C1A17]/40 uppercase block mb-3">
-                      AVAILABLE SLAB FORMATS
+                      AVAILABLE SIZES
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {selectedCollection.formats.map((format) => (
@@ -769,10 +769,7 @@ export default function FeaturedCollections({
                       <span className="text-[#1C1A17]/40 uppercase font-mono">Specific Style:</span>
                       <span className="text-amber-700 font-sans font-semibold">{selectedCollection.specificMaterialStyle || getMaterialStyle(selectedCollection)}</span>
                     </div>
-                    <div className="flex justify-between items-center text-[10px] pb-0.5">
-                      <span className="text-[#1C1A17]/40 uppercase font-mono">Lot Origin:</span>
-                      <span className="text-[#1C1A17]/80 font-mono">{selectedCollection.origin}</span>
-                    </div>
+
                     {/* Extra Airtable Custom Fields */}
                     {selectedCollection.brand && (
                       <div className="flex justify-between items-center text-[10px] border-t border-neutral-100 pt-1.5">
@@ -782,7 +779,7 @@ export default function FeaturedCollections({
                     )}
                     {selectedCollection.unit && (
                       <div className="flex justify-between items-center text-[10px] border-t border-neutral-100 pt-1.5">
-                        <span className="text-[#1C1A17]/40 uppercase font-mono">Unit:</span>
+                        <span className="text-[#1C1A17]/40 uppercase font-mono">Sold By:</span>
                         <span className="text-[#1C1A17]/80 font-mono">{selectedCollection.unit}</span>
                       </div>
                     )}
@@ -837,7 +834,7 @@ export default function FeaturedCollections({
                       }}
                       className="px-5 py-3 border border-[#f39b34]/30 bg-white hover:bg-[#f39b34] text-[#f39b34] hover:text-white text-xs font-sans font-semibold tracking-widest uppercase transition-colors duration-300 text-center cursor-pointer rounded-sm"
                     >
-                      Consult Carlos
+                      Contact Us
                     </button>
                   </div>
                   
