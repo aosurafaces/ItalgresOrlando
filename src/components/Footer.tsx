@@ -13,13 +13,13 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
   };
 
   return (
-    <footer className="relative w-full bg-[#FAF9F6] pt-16 pb-12 border-t border-t-[#f39b34]/30">
+    <footer className="relative w-full bg-[#FAF9F6] pt-10 sm:pt-16 pb-8 sm:pb-12 border-t border-t-[#f39b34]/30">
       
       {/* Footer Top Column grids */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-12 pb-8 sm:pb-16">
         
         {/* Col 1: Brand Wordmark (4 cols) */}
-        <div className="lg:col-span-4 flex flex-col space-y-4">
+        <div className="col-span-2 lg:col-span-4 flex flex-col space-y-3 sm:space-y-4">
           <a
             href="#"
             onClick={handleLogoClick}
@@ -39,7 +39,7 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
         </div>
 
         {/* Col 2: Collections Links (2 cols) */}
-        <div className="lg:col-span-2 flex flex-col space-y-4">
+        <div className="col-span-1 lg:col-span-2 flex flex-col space-y-3 sm:space-y-4">
           <h4 className="font-sans font-semibold text-[10px] tracking-widest text-[#f39b34] uppercase">
             Collections
           </h4>
@@ -58,7 +58,7 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
         </div>
 
         {/* Col 3: Company Links (2 cols) */}
-        <div className="lg:col-span-2 flex flex-col space-y-4">
+        <div className="col-span-1 lg:col-span-2 flex flex-col space-y-3 sm:space-y-4">
           <h4 className="font-sans font-semibold text-[10px] tracking-widest text-[#f39b34] uppercase">
             Company
           </h4>
@@ -82,7 +82,7 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
         </div>
 
         {/* Col 4: Contact & Consultations (4 cols) */}
-        <div className="lg:col-span-4 flex flex-col space-y-4">
+        <div className="col-span-2 lg:col-span-4 flex flex-col space-y-3 sm:space-y-4">
           <h4 className="font-sans font-semibold text-[10px] tracking-widest text-[#f39b34] uppercase">
             Consultations
           </h4>
@@ -124,7 +124,7 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
       </div>
 
       {/* Footer Bottom copyright row */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 border-t border-neutral-200 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono tracking-wide text-neutral-400">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-6 sm:pt-8 border-t border-neutral-200 flex flex-col md:flex-row justify-between items-center gap-3 text-[10px] font-mono tracking-wide text-neutral-400 text-center md:text-left">
         <span>© 2025 Italgres Orlando · Operated by AOSurfaces Group LLC</span>
         <div className="flex space-x-4">
           <a href="#" className="hover:text-[#f39b34] transition-colors">Privacy Terms</a>

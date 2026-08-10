@@ -15,16 +15,16 @@ export default function Projects() {
   };
 
   return (
-    <section id="projects" className="relative w-full bg-white py-20 md:py-28 border-t border-neutral-100">
+    <section id="projects" className="relative w-full bg-white py-12 sm:py-20 md:py-28 border-t border-neutral-100">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
         {/* Section Header */}
-        <div className="flex justify-between items-end mb-16">
+        <div className="flex justify-between items-end mb-8 sm:mb-16">
           <div>
             <span className="text-[#f39b34] text-[10px] tracking-[0.25em] uppercase font-semibold block mb-3">
               REALIZED SPACES
             </span>
-            <h2 className="font-serif text-3xl md:text-5xl text-[#1C1A17] font-light">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl text-[#1C1A17] font-light">
               Installation Gallery
             </h2>
           </div>
@@ -51,7 +51,7 @@ export default function Projects() {
         {/* Horizontal Scroll Strip */}
         <div
           ref={scrollRef}
-          className="w-full overflow-x-auto scroll-smooth flex space-x-6 pb-8 custom-scrollbar scrollbar-hide snap-x snap-mandatory"
+          className="w-full overflow-x-auto scroll-smooth flex space-x-4 sm:space-x-6 pb-6 sm:pb-8 custom-scrollbar scrollbar-hide snap-x snap-mandatory"
         >
           {PROJECT_CARDS.map((proj, idx) => (
             <motion.div
@@ -60,7 +60,7 @@ export default function Projects() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="snap-start shrink-0 w-[320px] h-[420px] relative bg-[#FAF9F6] border border-neutral-150 flex flex-col justify-end p-6 overflow-hidden group rounded-sm shadow-sm"
+              className="snap-start shrink-0 w-[280px] sm:w-[320px] h-[360px] sm:h-[420px] relative bg-[#FAF9F6] border border-neutral-150 flex flex-col justify-end p-4 sm:p-6 overflow-hidden group rounded-sm shadow-sm"
             >
               {/* Luxury light gradient placeholder replicating stone background */}
               <div
