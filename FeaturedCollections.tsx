@@ -40,6 +40,14 @@ export default function FeaturedCollections({
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  const [activePhoto, setActivePhoto] = useState<string>("");
+
+  // Reset activePhoto when a new collection is selected
+  useEffect(() => {
+    if (selectedCollection) {
+      setActivePhoto(selectedCollection.productPhotoUrl || selectedCollection.thumbnailUrl || "");
+    }
+  }, [selectedCollection]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(24);
 
@@ -657,29 +665,91 @@ export default function FeaturedCollections({
               transition={{ type: "spring", damping: 25 }}
               className="relative w-full max-w-4xl bg-white border border-neutral-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-sm z-10"
             >
-              {/* Left Side: Slab Canvas representation */}
-              <div className="relative h-[250px] md:h-full min-h-[300px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col justify-between p-6 overflow-hidden">
-                <div
-                  className="absolute inset-0 z-0 scale-100"
-                  style={{ background: selectedCollection.backgroundGradient }}
-                />
-                {(selectedCollection.productPhotoUrl || selectedCollection.thumbnailUrl) && (
-                  <img
-                    src={selectedCollection.productPhotoUrl || selectedCollection.thumbnailUrl}
-                    alt={selectedCollection.name}
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 z-0 w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
-                  />
-                )}
+              {/* Left Side: Photo Gallery */}
+              <div className="relative h-[300px] md:h-full min-h-[360px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col overflow-hidden bg-[#1C1A17]">
                 
-                {/* Back to library button */}
-                <button
-                  onClick={() => setSelectedCollection(null)}
-                  className="relative z-10 p-2 rounded-full bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-[#0a0a0a] transition-all self-start md:hidden cursor-pointer"
-                >
-                  <X size={15} />
-                </button>
+                {/* Main photo */}
+                <div className="relative flex-1 overflow-hidden">
+                  <div className="absolute inset-0" style={{ background: selectedCollection.backgroundGradient }} />
+                  {activePhoto && (
+                    <img
+                      src={activePhoto}
+                      alt={selectedCollection.name}
+                      referrerPolicy="no-referrer"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                      onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
+                    />
+                  )}
+
+                  {/* Mobile close */}
+                  <button
+                    onClick={() => setSelectedCollection(null)}
+                    className="absolute top-3 left-3 z-10 p-2 rounded-full bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-[#0a0a0a] transition-all md:hidden cursor-pointer"
+                  >
+                    <X size={15} />
+                  </button>
+
+                  {/* Download + Copy buttons on active photo */}
+                  {activePhoto && (
+                    <div className="absolute bottom-3 right-3 z-10 flex gap-2">
+                      <a
+                        href={activePhoto}
+                        download
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
+                        title="Download photo"
+                      >
+                        ↓ Download
+                      </a>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(activePhoto).then(() => {
+                            const btn = document.getElementById("copy-btn");
+                            if (btn) { btn.textContent = "✓ Copied"; setTimeout(() => { btn.textContent = "Copy URL"; }, 2000); }
+                          });
+                        }}
+                        id="copy-btn"
+                        className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
+                        title="Copy photo URL"
+                      >
+                        Copy URL
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail strip — all photos from Photo attachment field */}
+                {(() => {
+                  const allPhotos = [
+                    ...(selectedCollection.productPhotoUrl ? [{ url: selectedCollection.productPhotoUrl, filename: "product-photo" }] : []),
+                    ...((selectedCollection as any).photos || []),
+                  ];
+                  if (allPhotos.length <= 1) return null;
+                  return (
+                    <div className="flex gap-1.5 p-2 overflow-x-auto bg-[#0a0a0a]/60 backdrop-blur-sm scrollbar-hide">
+                      {allPhotos.map((photo: any, i: number) => (
+                        <button
+                          key={i}
+                          onClick={() => setActivePhoto(photo.url)}
+                          className={`flex-shrink-0 w-14 h-14 rounded-sm overflow-hidden border-2 transition-all cursor-pointer ${
+                            activePhoto === photo.url
+                              ? "border-[#f39b34] opacity-100"
+                              : "border-transparent opacity-55 hover:opacity-90"
+                          }`}
+                        >
+                          <img
+                            src={photo.url}
+                            alt={`Photo ${i + 1}`}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                            onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Right Side: Specifications Panel */}
@@ -863,13 +933,7 @@ const getFinishAndFeel = (col: Collection): string => {
 };
 
 const getColorGroup = (col: Collection): string => {
-  if (col.colorGroup) return col.colorGroup;
-  if (col.colors.includes("White")) return "White & Cream";
-  if (col.colors.includes("Black")) return "Deep Black";
-  if (col.colors.includes("Grey")) return "Dark Grey";
-  if (col.colors.includes("Beige")) return "Warm Beige";
-  if (col.colors.includes("Blue")) return "Blue and Greens";
-  return "Earthy Tones";
+  return col.colorGroup || "";
 };
 
 const getThickness = (col: Collection): string => {
