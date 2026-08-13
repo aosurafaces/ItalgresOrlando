@@ -340,6 +340,7 @@ export default function FeaturedCollections({
   });
 
   return (
+    <>
     <style>{`@keyframes bounce { 0%,100%{transform:translateY(0);opacity:0.4} 50%{transform:translateY(-4px);opacity:1} }`}</style>
     <section id="collections" className="relative w-full bg-[#FAF9F6] py-8 border-t border-[#f39b34]/15">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -913,6 +914,7 @@ export default function FeaturedCollections({
         )}
       </AnimatePresence>
     </section>
+    </>
   );
 }
 
