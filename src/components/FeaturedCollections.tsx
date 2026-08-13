@@ -726,29 +726,14 @@ export default function FeaturedCollections({
                   {/* Download + Copy buttons on active photo */}
                   {activePhoto && (
                     <div className="absolute bottom-3 right-3 z-10 flex gap-2">
-                      <button
-                        onClick={async () => {
-                          try {
-                            const res = await fetch(activePhoto, { mode: "cors" });
-                            const blob = await res.blob();
-                            const blobUrl = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = blobUrl;
-                            a.download = `${selectedCollection.name.replace(/\s+/g, "-").toLowerCase()}.jpg`;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            URL.revokeObjectURL(blobUrl);
-                          } catch {
-                            // Fallback — open in new tab if blob fetch fails
-                            window.open(activePhoto, "_blank");
-                          }
-                        }}
+                      <a
+                        href={`/api/download?url=${encodeURIComponent(activePhoto)}&filename=${encodeURIComponent(selectedCollection.name.replace(/\s+/g, "-").toLowerCase() + ".jpg")}`}
+                        download
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
                         title="Download photo"
                       >
                         ↓ Download
-                      </button>
+                      </a>
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(activePhoto).then(() => {
