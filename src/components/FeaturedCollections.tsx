@@ -726,14 +726,29 @@ export default function FeaturedCollections({
                   {/* Download + Copy buttons on active photo */}
                   {activePhoto && (
                     <div className="absolute bottom-3 right-3 z-10 flex gap-2">
-                      <a
-                        href={`/api/download?url=${encodeURIComponent(activePhoto)}&filename=${encodeURIComponent(selectedCollection.name.replace(/\s+/g, "-").toLowerCase() + ".jpg")}`}
-                        download
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(activePhoto, { mode: "cors" });
+                            const blob = await res.blob();
+                            const blobUrl = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = blobUrl;
+                            a.download = `${selectedCollection.name.replace(/\s+/g, "-").toLowerCase()}.jpg`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(blobUrl);
+                          } catch {
+                            // Fallback — open in new tab if blob fetch fails
+                            window.open(activePhoto, "_blank");
+                          }
+                        }}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
                         title="Download photo"
                       >
                         ↓ Download
-                      </a>
+                      </button>
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(activePhoto).then(() => {
@@ -804,11 +819,8 @@ export default function FeaturedCollections({
                   {/* Surface attributes */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="border border-[#f39b34]/30 p-3 rounded bg-[#f39b34]/05 flex flex-col justify-center">
-                      <span className="text-[9px] font-mono tracking-widest text-[#f39b34] uppercase block mb-1">
-                        Sizes
-                      </span>
                       <span className="text-[10px] font-bold text-[#f39b34] uppercase tracking-wide leading-tight">
-                        Other sizes may be available — consult us
+                        Contact us for sizes
                       </span>
                     </div>
 
