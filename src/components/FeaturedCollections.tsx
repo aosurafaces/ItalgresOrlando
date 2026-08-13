@@ -340,6 +340,7 @@ export default function FeaturedCollections({
   });
 
   return (
+    <style>{`@keyframes bounce { 0%,100%{transform:translateY(0);opacity:0.4} 50%{transform:translateY(-4px);opacity:1} }`}</style>
     <section id="collections" className="relative w-full bg-[#FAF9F6] py-8 border-t border-[#f39b34]/15">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
@@ -507,7 +508,39 @@ export default function FeaturedCollections({
 
             {/* Loader / Empty States */}
             <AnimatePresence mode="wait">
-              {isAiSearching ? (
+              {loading ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col space-y-4"
+                >
+                  {/* Loading banner */}
+                  <div className="flex items-center gap-3 px-4 py-3 bg-[#1C1A17] border border-[#f39b34]/20 rounded-sm">
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 rounded-full bg-[#f39b34]/30 blur-md animate-pulse" />
+                      <Sparkles size={16} className="text-[#f39b34] animate-spin relative z-10" style={{ animationDuration: "2.5s" }} />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-white">Loading catalog</p>
+                      <p className="text-[9px] font-mono text-white/35 uppercase tracking-widest">Fetching lot inventory from database...</p>
+                    </div>
+                    <div className="ml-auto flex gap-1">
+                      {[0,1,2].map(i => (
+                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#f39b34]" style={{ animation: `bounce 1s ease-in-out ${i * 0.15}s infinite` }} />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Skeleton grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="bg-white border border-neutral-100 rounded-sm overflow-hidden animate-pulse">
+                        <div className="aspect-square bg-gradient-to-br from-neutral-100 to-neutral-200" />
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : isAiSearching ? (
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -693,10 +726,8 @@ export default function FeaturedCollections({
                   {activePhoto && (
                     <div className="absolute bottom-3 right-3 z-10 flex gap-2">
                       <a
-                        href={activePhoto}
+                        href={`/api/download?url=${encodeURIComponent(activePhoto)}&filename=${encodeURIComponent(selectedCollection.name.replace(/\s+/g, "-").toLowerCase() + ".jpg")}`}
                         download
-                        target="_blank"
-                        rel="noreferrer"
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
                         title="Download photo"
                       >
@@ -771,17 +802,13 @@ export default function FeaturedCollections({
 
                   {/* Surface attributes */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="border border-neutral-200/60 p-3 rounded bg-white">
-                      <span className="text-[9px] font-mono tracking-widest text-[#1C1A17]/40 uppercase block mb-1">
-                        AVAILABLE SIZES
+                    <div className="border border-[#f39b34]/30 p-3 rounded bg-[#f39b34]/05 flex flex-col justify-center">
+                      <span className="text-[9px] font-mono tracking-widest text-[#f39b34] uppercase block mb-1">
+                        Sizes
                       </span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {selectedCollection.formats.map((format) => (
-                          <span key={format} className="text-xs text-[#f39b34] font-sans font-medium uppercase">
-                            {format}
-                          </span>
-                        ))}
-                      </div>
+                      <span className="text-[10px] font-bold text-[#f39b34] uppercase tracking-wide leading-tight">
+                        Other sizes may be available — consult us
+                      </span>
                     </div>
 
                     <div className="border border-neutral-200/60 p-3 rounded bg-white">
