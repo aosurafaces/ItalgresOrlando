@@ -53,7 +53,7 @@ export default function PreSelectionDrawer({
         `${s.name} (${s.category}, ${s.finish}) — ${s.quantity} ${s.quantityType}`
       ).join("\n");
 
-      // 1. Notify Carlos (operator copy)
+      // 1. Notify operator (internal copy)
       const operatorRes = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,7 +85,7 @@ export default function PreSelectionDrawer({
         })
       });
       setSubmitResult({
-        message: "Your pre-selection has been sent to Carlos.",
+        message: "Your pre-selection has been sent to us.",
         summary: slabsSummary,
         emailSimulated: formData.email
       });
@@ -205,7 +205,7 @@ export default function PreSelectionDrawer({
                           Follow-up consultation
                         </h5>
                         <p className="text-[11px] text-neutral-500 font-light leading-relaxed">
-                          Carlos will review your pre-selected formats & finishes to cross-check real-time warehouse counts and contact you within 2 hours.
+                          We will review your pre-selected formats & finishes to cross-check real-time warehouse counts and contact you within 2 hours.
                         </p>
                       </div>
                     </div>
@@ -337,7 +337,7 @@ export default function PreSelectionDrawer({
                         REQUEST SPECIFICATIONS & PRICING
                       </span>
                       <p className="text-[11px] text-neutral-500 font-light leading-relaxed">
-                        Carlos will receive your selection, verify physical inventory in the Orlando depot, and prepare format alternatives. Fill in your details below.
+                        We will receive your selection, verify physical inventory in the Orlando depot, and prepare format alternatives. Fill in your details below.
                       </p>
 
                       {/* Name input */}
@@ -403,7 +403,7 @@ export default function PreSelectionDrawer({
 
                       {/* Notes input */}
                       <textarea
-                        placeholder="Tell Carlos about any custom edge detailing, countertop templates, or miter cuts needed..."
+                        placeholder="Tell us about any custom edge detailing, countertop templates, or miter cuts needed..."
                         value={formData.notes}
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         rows={3}
