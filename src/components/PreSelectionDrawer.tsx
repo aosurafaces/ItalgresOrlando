@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Trash2, Send, CheckCircle2, ShoppingBag, Plus, Minus, User, Mail, Phone, FileText, Loader2, Info } from "lucide-react";
 import { Collection, PreSelectedItem } from "../types";
@@ -22,6 +22,25 @@ export default function PreSelectionDrawer({
   onRemoveItem,
   onClear
 }: PreSelectionDrawerProps) {
+  const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+  const touchStartX = useRef(0);
+
+  // Keep the mobile carousel index valid as items are added/removed
+  useEffect(() => {
+    if (mobileActiveIndex >= items.length) {
+      setMobileActiveIndex(Math.max(0, items.length - 1));
+    }
+  }, [items.length, mobileActiveIndex]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 50) setMobileActiveIndex(i => Math.min(i + 1, items.length - 1));
+    else if (diff < -50) setMobileActiveIndex(i => Math.max(i - 1, 0));
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -243,7 +262,107 @@ export default function PreSelectionDrawer({
                         SELECTED MATERIALS ({items.length})
                       </span>
                       
-                      <div className="space-y-3">
+                      {/* ── MOBILE: one item at a time, flat image, no text labels ── */}
+                      <div className="md:hidden">
+                        {items[mobileActiveIndex] && (() => {
+                          const item = items[mobileActiveIndex];
+                          return (
+                            <div
+                              onTouchStart={handleTouchStart}
+                              onTouchEnd={handleTouchEnd}
+                              className="relative bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm"
+                            >
+                              {/* Flat product image */}
+                              <div
+                                className="relative w-full aspect-[4/3] overflow-hidden"
+                                style={{ background: item.collection.backgroundGradient }}
+                              >
+                                {(item.collection.thumbnailUrl || item.collection.productPhotoUrl) && (
+                                  <img
+                                    src={item.collection.thumbnailUrl || item.collection.productPhotoUrl}
+                                    alt=""
+                                    referrerPolicy="no-referrer"
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                                  />
+                                )}
+                                {/* Remove button overlay */}
+                                <button
+                                  onClick={() => onRemoveItem(item.collection.id)}
+                                  className="absolute top-2.5 right-2.5 p-2 rounded-full bg-black/60 hover:bg-red-500 text-white transition-colors cursor-pointer backdrop-blur-sm"
+                                  title="Remove"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+
+                              {/* Quantity controls only — no labels */}
+                              <div className="flex items-center justify-center gap-4 py-4 px-4 border-t border-neutral-100">
+                                <div className="flex items-center space-x-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => onUpdateQuantity(item.collection.id, Math.max(1, item.quantity - 1))}
+                                    className="p-1.5 border border-neutral-200 hover:border-[#f39b34]/30 bg-neutral-50 hover:bg-white text-neutral-500 hover:text-[#f39b34] transition-colors rounded-sm cursor-pointer"
+                                  >
+                                    <Minus size={12} />
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={item.quantity}
+                                    onChange={(e) => onUpdateQuantity(item.collection.id, Math.max(1, parseInt(e.target.value) || 1))}
+                                    className="w-12 text-center bg-[#FAF9F6] border border-neutral-200 text-neutral-800 text-sm py-1 focus:outline-none focus:border-[#f39b34] rounded-sm"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => onUpdateQuantity(item.collection.id, item.quantity + 1)}
+                                    className="p-1.5 border border-neutral-200 hover:border-[#f39b34]/30 bg-neutral-50 hover:bg-white text-neutral-500 hover:text-[#f39b34] transition-colors rounded-sm cursor-pointer"
+                                  >
+                                    <Plus size={12} />
+                                  </button>
+                                </div>
+
+                                <div className="flex space-x-1.5">
+                                  {(['Slabs', 'Sq Ft'] as const).map((type) => (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      onClick={() => onUpdateQuantityType(item.collection.id, type)}
+                                      className={`px-2.5 py-1.5 text-[9px] font-mono tracking-wider uppercase border transition-colors rounded-sm ${
+                                        item.quantityType === type
+                                          ? "border-[#f39b34] bg-[#f39b34]/10 text-[#f39b34]"
+                                          : "border-neutral-200 bg-transparent text-neutral-400"
+                                      }`}
+                                    >
+                                      {type}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {/* Dot navigation */}
+                        {items.length > 1 && (
+                          <div className="flex items-center justify-center gap-1.5 mt-3">
+                            {items.map((_, i) => (
+                              <button
+                                key={i}
+                                onClick={() => setMobileActiveIndex(i)}
+                                className={`rounded-full transition-all cursor-pointer ${
+                                  i === mobileActiveIndex
+                                    ? "w-5 h-1.5 bg-[#f39b34]"
+                                    : "w-1.5 h-1.5 bg-neutral-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ── DESKTOP: full stacked list with labels ── */}
+                      <div className="hidden md:block space-y-3">
                         {items.map((item) => (
                           <div
                             key={item.collection.id}
