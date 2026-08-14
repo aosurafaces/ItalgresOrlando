@@ -533,7 +533,7 @@ export default function FeaturedCollections({
                     </div>
                   </div>
                   {/* Skeleton grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                     {Array.from({ length: 12 }).map((_, i) => (
                       <div key={i} className="bg-white border border-neutral-100 rounded-sm overflow-hidden animate-pulse">
                         <div className="aspect-square bg-gradient-to-br from-neutral-100 to-neutral-200" />
@@ -589,7 +589,7 @@ export default function FeaturedCollections({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
-                  className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 items-start"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 items-start"
                 >
                   {sortedAndFilteredCollections.slice(0, visibleCount).map((col, cardIndex) => {
                     const isPreSelected = selectedSlabIds.includes(col.id);
@@ -618,8 +618,8 @@ export default function FeaturedCollections({
                           ) : (
                             <div className="w-full h-full" style={{ background: col.backgroundGradient }} />
                           )}
-                          {/* Finish tag top-left */}
-                          <div className="absolute top-2.5 left-2.5 flex gap-1">
+                          {/* Finish tag top-left — hidden on mobile per "flat image" request */}
+                          <div className="hidden sm:flex absolute top-2.5 left-2.5 gap-1">
                             <span className="text-[7px] font-mono tracking-widest uppercase bg-black/60 px-1.5 py-0.5 backdrop-blur-sm" style={{color:"#ffffff"}}>
                               {col.finish}
                             </span>
@@ -644,8 +644,8 @@ export default function FeaturedCollections({
                             {isPreSelected ? "✓" : "+"}
                           </button>
 
-                          {/* Name at bottom over gradient */}
-                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                          {/* Name at bottom over gradient — hidden on mobile per "flat image" request */}
+                          <div className="hidden sm:block absolute bottom-0 left-0 right-0 p-3">
                             <h3 className="font-sans text-[10px] font-bold tracking-wide leading-tight uppercase truncate" style={{color:"#ffffff",textShadow:"0 2px 8px rgba(0,0,0,1),0 0 20px rgba(0,0,0,1)"}}>
                               {col.name}
                             </h3>
@@ -730,7 +730,7 @@ export default function FeaturedCollections({
                         href={`/api/download?url=${encodeURIComponent(activePhoto)}&filename=${encodeURIComponent(selectedCollection.name.replace(/\s+/g, "-").toLowerCase() + ".jpg")}`}
                         download
                         className="flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-[#0a0a0a]/80 hover:bg-[#f39b34] text-white hover:text-black transition-all rounded-sm cursor-pointer backdrop-blur-sm"
-                        title="Download photo"
+                        title="Download photo — or right-click the image and choose Save Image As"
                       >
                         ↓ Download
                       </a>
