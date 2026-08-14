@@ -145,11 +145,8 @@ export default function PreSelectionDrawer({
                   </div>
                   <div>
                     <h3 className="font-serif text-lg text-[#1C1A17] font-semibold">
-                      Material Pre-Selection List
+                      Quote List
                     </h3>
-                    <p className="text-[10px] font-mono tracking-widest text-[#1C1A17]/40 uppercase">
-                      Bespoke Specification Sheet Builder
-                    </p>
                   </div>
                 </div>
                 <button
