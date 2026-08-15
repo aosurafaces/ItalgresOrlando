@@ -3,7 +3,12 @@ import { motion } from "motion/react";
 import { PROJECT_CARDS } from "../data";
 import { ChevronLeft, ChevronRight, Compass, Shield } from "lucide-react";
 
+// Set to true when ready to launch the Installation Gallery section
+const SHOW_INSTALLATION_GALLERY = false;
+
 export default function Projects() {
+  if (!SHOW_INSTALLATION_GALLERY) return null;
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
