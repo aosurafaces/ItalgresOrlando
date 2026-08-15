@@ -94,7 +94,7 @@ export default function App() {
         onHomeClick={() => handleScrollToSection("collections")}
       />
 
-      <main className="pt-16">
+      <main className="pt-[104px] sm:pt-[112px] lg:pt-16">
         <FeaturedCollections
           onBookClick={() => setIsBookingOpen(true)}
           selectedSlabIds={preSelectedSlabs.map(item => item.collection.id)}
