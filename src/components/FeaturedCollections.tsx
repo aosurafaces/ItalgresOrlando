@@ -671,17 +671,17 @@ export default function FeaturedCollections({
               className="relative w-full max-w-4xl bg-white border-0 sm:border border-neutral-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-none sm:rounded-sm z-10 my-0 sm:my-8"
             >
               {/* Left Side: Photo Gallery */}
-              <div className="relative h-[280px] sm:h-[320px] md:h-full md:min-h-[360px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col overflow-hidden bg-[#1C1A17]">
+              <div className="relative h-[340px] sm:h-[380px] md:h-full md:min-h-[360px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col overflow-hidden bg-[#1C1A17]">
                 
                 {/* Main photo */}
-                <div className="relative flex-1 overflow-hidden">
-                  <div className="absolute inset-0" style={{ background: selectedCollection.backgroundGradient }} />
+                <div className="relative flex-1 overflow-hidden bg-[#1C1A17]">
+                  <div className="absolute inset-0" style={{ background: selectedCollection.backgroundGradient, opacity: 0.35 }} />
                   {activePhoto && (
                     <img
                       src={activePhoto}
                       alt={selectedCollection.name}
                       referrerPolicy="no-referrer"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                      className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
                       onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
                     />
                   )}

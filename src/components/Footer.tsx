@@ -44,9 +44,30 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
         {/* Col 2: Contact & Consultations */}
         <div className="flex flex-col space-y-3 sm:space-y-4">
           <h4 className="font-sans font-semibold text-[10px] tracking-widest text-[#f39b34] uppercase">
-            Consultations
+            Consultations — Carlos Avila
           </h4>
-          <p className="text-xs text-neutral-500 font-light leading-relaxed">
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[11px] text-neutral-600 font-mono">
+            <div className="flex flex-col space-y-2">
+              <a href="tel:+13054983631" className="hover:text-[#f39b34] transition-colors">
+                Cell: 305.498.3631
+              </a>
+              <a href="tel:+13212526369" className="hover:text-[#f39b34] transition-colors">
+                Office: 321.252.6369
+              </a>
+            </div>
+            <div className="flex flex-col space-y-2">
+              <a href="mailto:carlos@italgres.com" className="hover:text-[#f39b34] transition-colors flex items-center gap-1.5">
+                <Mail size={12} className="text-[#f39b34] flex-shrink-0" />
+                carlos@italgres.com
+              </a>
+              <a href="https://italgres.com" target="_blank" rel="noreferrer" className="hover:text-[#f39b34] transition-colors text-neutral-400">
+                italgres.com
+              </a>
+            </div>
+          </div>
+
+          <p className="text-xs text-neutral-500 font-light leading-relaxed pt-1">
             Contact us for a private viewing.
           </p>
 
@@ -56,30 +77,6 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
           >
             Book showroom viewing
           </button>
-
-          <div className="flex flex-col space-y-2 pt-2 text-[11px] text-neutral-600 font-mono">
-            <span className="flex items-center space-x-2">
-              <Mail size={12} className="text-[#f39b34]" />
-              <a href="mailto:carlos@italgres.com" className="hover:text-[#f39b34] transition-colors">
-                carlos@italgres.com
-              </a>
-            </span>
-            <span className="flex items-center space-x-2">
-              <a href="https://italgres.com" target="_blank" rel="noreferrer" className="hover:text-[#f39b34] transition-colors text-neutral-400">
-                italgres.com
-              </a>
-            </span>
-          </div>
-
-          <div className="flex flex-col space-y-1.5 pt-3 border-t border-neutral-200 text-[11px] text-neutral-600 font-mono">
-            <span className="text-[10px] font-sans font-semibold text-[#1C1A17] tracking-wide">Carlos Avila</span>
-            <a href="tel:+13054983631" className="hover:text-[#f39b34] transition-colors">
-              Cell: 305.498.3631
-            </a>
-            <a href="tel:+13212526369" className="hover:text-[#f39b34] transition-colors">
-              Office: 321.252.6369
-            </a>
-          </div>
         </div>
 
       </div>
