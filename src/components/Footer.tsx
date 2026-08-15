@@ -61,8 +61,8 @@ export default function Footer({ onBookClick, onLinkClick }: FooterProps) {
                 <Mail size={12} className="text-[#f39b34] flex-shrink-0" />
                 carlos@italgres.com
               </a>
-              <a href="https://italgres.com" target="_blank" rel="noreferrer" className="hover:text-[#f39b34] transition-colors text-neutral-400">
-                italgres.com
+              <a href="https://italgresorlando.com" target="_blank" rel="noreferrer" className="hover:text-[#f39b34] transition-colors text-neutral-400">
+                italgresorlando.com
               </a>
             </div>
           </div>

@@ -68,14 +68,14 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.8 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-neutral-900/60 backdrop-blur-xs"
+            className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs"
           />
 
           {/* Modal box */}
@@ -84,13 +84,13 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", damping: 25 }}
-            className="relative w-full max-w-xl bg-white border border-neutral-200 overflow-hidden shadow-2xl rounded-sm z-10"
+            className="relative w-full max-w-xl bg-white border-0 sm:border border-neutral-200 overflow-hidden shadow-2xl rounded-none sm:rounded-sm z-10 my-0 sm:my-8"
           >
             {/* Top orange bar */}
             <div className="w-full h-[3px] bg-[#f39b34]" />
 
             {/* Header */}
-            <div className="px-8 pt-8 pb-4 flex justify-between items-start">
+            <div className="px-5 pt-6 pb-4 sm:px-8 sm:pt-8 flex justify-between items-start">
               <div>
                 <span className="text-[#f39b34] text-[10px] tracking-[0.25em] uppercase font-bold block mb-2">
                   ITALGRES
@@ -109,7 +109,7 @@ export default function BookingForm({ isOpen, onClose }: BookingFormProps) {
             </div>
 
             {/* Inner Content (Switch depending on success) */}
-            <div className="px-8 pb-8">
+            <div className="px-5 pb-6 sm:px-8 sm:pb-8">
               {!submitResult ? (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <p className="text-xs text-neutral-500 font-light leading-relaxed mb-4">
