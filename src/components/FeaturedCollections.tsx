@@ -362,10 +362,10 @@ export default function FeaturedCollections({
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "tween", duration: 0.25 }}
-                id="tour-filter-drawer" className="fixed right-0 top-0 h-full w-96 z-50 flex flex-col shadow-2xl"
+                id="tour-filter-drawer" className="fixed right-0 top-0 h-full w-full sm:w-96 z-50 flex flex-col shadow-2xl"
                 style={{background:"#ffffff"}}
               >
-                <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100" style={{background:"#1C1A17"}}>
+                <div className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 border-b border-neutral-100" style={{background:"#1C1A17"}}>
                   <div className="flex items-center space-x-2">
                     <SlidersHorizontal size={16} style={{color:"#f39b34"}} />
                     <span className="text-sm font-bold uppercase tracking-widest" style={{color:"#ffffff"}}>Filter Results</span>
@@ -391,10 +391,10 @@ export default function FeaturedCollections({
                     <div key={key} className="border-b border-neutral-100">
                       <button
                         onClick={() => toggleSection(key)}
-                        className="w-full flex items-center justify-between px-6 py-5 text-left cursor-pointer hover:bg-neutral-50 transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 text-left cursor-pointer hover:bg-neutral-50 transition-colors"
                       >
                         <div className="flex items-center space-x-3">
-                          <span className="text-base font-semibold" style={{color:"#1C1A17"}}>{label}</span>
+                          <span className="text-sm sm:text-base font-semibold" style={{color:"#1C1A17"}}>{label}</span>
                           {list.length > 0 && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{background:"#f39b34",color:"#000"}}>{list.length}</span>
                           )}
@@ -402,16 +402,16 @@ export default function FeaturedCollections({
                         <span className="text-lg" style={{color:"#9a9690"}}>{openSections[key] ? "−" : "+"}</span>
                       </button>
                       {openSections[key] && (
-                        <div className="px-6 pb-5 space-y-4">
+                        <div className="px-4 pb-4 space-y-3 sm:px-6 sm:pb-5 sm:space-y-4">
                           {options.map(val => {
                             const isChecked = list.includes(val);
                             return (
                               <label key={val} className="flex items-center space-x-3 cursor-pointer group">
                                 <input type="checkbox" checked={isChecked} onChange={() => toggleFilter(list, setList, val)} className="sr-only" />
-                                <div className={`w-5 h-5 border-2 transition-all flex items-center justify-center rounded-sm flex-shrink-0 ${isChecked ? "border-[#f39b34] bg-[#f39b34]" : "border-neutral-300 group-hover:border-[#f39b34]/50"}`}>
+                                <div className={`w-4 h-4 sm:w-5 sm:h-5 border-2 transition-all flex items-center justify-center rounded-sm flex-shrink-0 ${isChecked ? "border-[#f39b34] bg-[#f39b34]" : "border-neutral-300 group-hover:border-[#f39b34]/50"}`}>
                                   {isChecked && <Check size={12} strokeWidth={3} style={{color:"#000"}} />}
                                 </div>
-                                <span className="text-base" style={{color: isChecked ? "#1C1A17" : "#6b6762"}}>{val}</span>
+                                <span className="text-sm sm:text-base" style={{color: isChecked ? "#1C1A17" : "#6b6762"}}>{val}</span>
                               </label>
                             );
                           })}
@@ -438,14 +438,6 @@ export default function FeaturedCollections({
         {/* Full Width Grid */}
         <div className="flex flex-col space-y-6">
             
-            {/* Result count */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono" style={{color:"#9a9690"}}>
-                <span style={{color:"#f39b34",fontWeight:600}}>{sortedAndFilteredCollections.length}</span> lots
-                {searchQuery && <> — <span style={{color:"#1C1A17"}}>"{searchQuery}"</span></>}
-              </span>
-            </div>
-
             {/* Active Filter Pills */}
             {(selectedFinishAndFeels.length > 0 || selectedColorGroups.length > 0 || selectedSizeFormats.length > 0 || selectedVisualLooks.length > 0 || selectedApplications.length > 0 || searchQuery) && (
               <div className="flex flex-wrap items-center gap-2">
@@ -459,27 +451,6 @@ export default function FeaturedCollections({
                 <button onClick={handleClearFilters} className="text-[10px] font-mono hover:underline cursor-pointer uppercase tracking-wider" style={{color:"#f39b34"}}>Clear All</button>
               </div>
             )}
-
-            {/* Quick preset links to assist speed of search */}
-            <div className="flex flex-wrap gap-2 items-center px-1">
-              <span className="text-[9px] text-[#1C1A17]/40 font-mono uppercase tracking-wider mr-1">Warehouse Shortcuts:</span>
-              {[
-                "Smooth Matte",
-                "Metal & Oxid Look",
-                "Polished/High Gloss",
-                "Deep Black",
-                "White & Cream"
-              ].map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => handleQuickSearch(prompt)}
-                  className="text-[10px] font-sans text-[#1C1A17]/70 hover:text-[#f39b34] bg-white hover:bg-neutral-50 px-3 py-1 border border-neutral-200 hover:border-[#f39b34]/20 transition-all cursor-pointer rounded-sm shadow-sm"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
 
             {/* AI Filter Suggestion Banner */}
             {aiFilterQuery && onApplyAiFilter && (
@@ -681,14 +652,14 @@ export default function FeaturedCollections({
       {/* Luxury Collection Detail Drawer Modal — id for tour */}
       <AnimatePresence>
         {selectedCollection && (
-          <div id="tour-detail-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div id="tour-detail-modal" className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
             {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.75 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedCollection(null)}
-              className="absolute inset-0 bg-neutral-900/60 backdrop-blur-xs"
+              className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs"
             />
 
             {/* Modal Body */}
@@ -697,10 +668,10 @@ export default function FeaturedCollections({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25 }}
-              className="relative w-full max-w-4xl bg-white border border-neutral-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-sm z-10"
+              className="relative w-full max-w-4xl bg-white border-0 sm:border border-neutral-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-none sm:rounded-sm z-10 my-0 sm:my-8"
             >
               {/* Left Side: Photo Gallery */}
-              <div className="relative h-[300px] md:h-full min-h-[360px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col overflow-hidden bg-[#1C1A17]">
+              <div className="relative h-[280px] sm:h-[320px] md:h-full md:min-h-[360px] border-b md:border-b-0 md:border-r border-neutral-200 flex flex-col overflow-hidden bg-[#1C1A17]">
                 
                 {/* Main photo */}
                 <div className="relative flex-1 overflow-hidden">
@@ -785,7 +756,7 @@ export default function FeaturedCollections({
               </div>
 
               {/* Right Side: Specifications Panel */}
-              <div className="p-6 md:p-8 flex flex-col justify-between h-full bg-[#FAF9F6] overflow-y-auto max-h-[70vh] md:max-h-[90vh]">
+              <div className="p-6 md:p-8 flex flex-col justify-between bg-[#FAF9F6] md:overflow-y-auto md:max-h-[90vh]">
                 <div>
                   <div className="flex justify-between items-center pb-4 border-b border-neutral-200 mb-6">
                     <div>
