@@ -22,6 +22,45 @@ interface FeaturedCollectionsProps {
   onApplyAiFilter?: (q: string) => void;
 }
 
+
+// ── Fallback image for missing/broken photo URLs ─────────────────────────────
+const PLACEHOLDER_IMG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAMgCAIAAABUEpE/AAAu9klEQVR4nO3deXxU9b3w8UMCCFFWQVCQRRGRuqLW2iqCdQX3Bds+bb1WW+vSxbZ6fa6t7fXa56rV2l5b2z69ba3eWnuxCGopahURN7AqoiJhkV0BUUSSAAkhzx/pkzvMJCHLN5OZyfv98g9ycubkNzMHz4ffOTnTqXJbRQIAQJyi9h4AAEChEVgAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAsM7t9YPfWb2yvX40ANBx7DN4SPZ/qBksAIBgAgsAIFi7nSKs0y4TdwBAYWvfi5HMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABBMYAEABBNYAADBBBYAQDCBBQAQTGABAAQTWAAAwQQWAEAwgQUAEExgAQAEE1gAAMEEFgBAMIEFABCsc3sPAArEKy+92N5DgBhjjv5Eew8B8p7AglbRVRSeur1aaUGLOUUILaeuKGz2cGgxM1jQEg48dBC1u7qpLGguM1jQbOqKjsY+D80lsKB5HGnomOz50CxOEUIYp1EoAEIKQpjBgmZo6Ngz5uhPqCsKQyM7s/aCphNY0FT1Hl2kFQWpoR1bY0ETCSwAgGACC1rO3BWFzR4OLSawoEmcGYFa/i5AUwgsaCH/uKcjsJ9DywgsAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAgnVu7wEArbLt3rENfWu3Lz6TzZEAUEdgQV5qpKsy11FaAFkmsCDPNCWt6n2IzALIGtdgQT5pQV2FPJY2snTRgvYeAtAmBBbkjdYXksYCyA6BBfkhqo00Vu6onb4yiQUFSWBBHoitIo0F0NYEFuS6tughjdXuTFxBYRNYkNParoQ0FkDbEViQu9q6gTRWe0mbvjKbBYVHYAEABBNYkKOyM71kEiv7zFdBRyCwANqf6oICI7AAskdIQQchsCAXZfPMnbOEAOEEFkCWmL6CjkNgAeQE+QWFRGABZIN+gg5FYAEABBNYAG2uidNXZrmgYAgsAIBgAgugbZmXgg5IYAEABBNYkIt2++IzBfmzOqDmTl+Z7oLCILAAAIIJLIC2YjoKOiyBBTkqO2funB/MQbIMCoDAAmgTOgk6MoEFuautp5dMXwG0EYEFOa3tGkhdtSnTV9DBCSzIdW1RQuoqx+kzyHcCC/JAbA+pq7YmjwCBBfkhqorUFUAWCCzIG61vI3WVBVHTV6bBIK8JLMgnrSkkdQWQNZ3bewBA89R20rZ7xzb3IWSBaSeglsCCvFTXTI2Ulq4CaC8CC/Kbisod4dNXSxct2H/k6NhtAtnhGiwAgGACCyCAq6+AVAILIHfpNshTAgugtWQQkEZgAQAEE1hAsI42ndPRni/QFAILiFRbG5ojkBcT8pHAAsKkpkAHyYIO8jSB5hJYAADBBBYQI3Mup+Bnd7L2BAv+lYTCI7CAAA0VgDIAOiaBBbRW4xVVqI1VqM8LCCGwgFZpSmdoEaCjEVhANhRYY2X/6RTYCwgFT2ABLeeoD1AvgQW0UHPrqmBqrGCeCNB2BBbQEi2LDGnSGl49yCMCC2i21hzp870S8n38QHYILCDbNApQ8AQW0DwheZSnjZWnwwayT2ABzaAw2pfXH/KFwAKaKvbonnetkHcDBtqRwAKapC3yQrIAhUpgAe0pXxord8aZOyMBGiGwgF1r04O6YgAKj8ACdiELAZTjjZXjwwNykMACGqMtAFpAYAENymZd5WzJ5eDAcnBIQBqBBeQK3QAUDIEF1K9dcifXGivXxgPkC4EF1KMdw0LTNIVXCXKcwALStfvBu90HUCtHhgHkI4EF7ERVALSewAJyUbt3XrsPAMhrAgv4HzlVFTk1mBzk9YFcJrCAf8jBA3Z7DSkHXwogvwgsIElyOClydmAAjRBYQK5HTJaHl+OvRqo8Gip0NAILACCYwIKOLi9mQbI2yLx4NYDcJ7CgQ8ujnsijoQIILOi48i5Z2nrAefeCJPk5ZugIBBZ0UHl6YM7TYQMdjcAC8kwbNZZ0AwIJLOiIxEQh8W5CDhJY0OEUwPE4/CkUwGsC5BSBBR1LwZREwTwRoCAJLOhACixKop5Ogb0sQC4QWEAe00a1vA6QawQWdBSFegxu5fMq1JcFaF8CCzoEGQGQTQILCl/B11WLn2AhvTKF9FygAAgsKHAd5LjbQZ4mkC8EFlAgmttYmgxoOwILCllHa4iO9nyBnCWwoGB1zNpo4rMuyBenIJ8U5CmBBYXJsRagHQksKEAdvK52+fQ7+OsDZIHAAgpQh02oDvvEIdcILCg0DrG1GnodvD5AFggsKCjqIZVXA2gvAgsKh57IlPaaeImA7BBYUCCkA7XsCZALBBZQ4OqCQ3kAWSOwoBBIh8Z5fYAsE1iQ99RDU3SoV6lDPVnITQIL8ptDKUAOEliQx9QVQG4SWAAAwQQW5CvTVzTC7gHtS2BBXnL4BMhlAgvyj7oCyHECC/KMuqKJ7CrQjgQWAEAwgQX5xJwEQF4QWJA31BVAvhBYkB/UFS1gt4H2IrAgDzhMAuQXgQUAEExgQa4zfUVr2H+gXQgsyGmOjgD5SGBB7lJXAHlKYEGOUlcA+UtgARQ4sQ7ZJ7AgFzkiAuQ1gQU5R10B5DuBBblFXdEW7FeQZQILcoijIEBhEFgAAMEEFuQK01cABUNgQU5QV7Q1+xhkk8CC9ufIB1BgBBa0M3UFUHgEFkBHoeYhawQWtCcHPICCJLCg3agrgEIlsKB9qCuAAiawoB2oK9qLfQ+yQ2ABAAQTWJBtphAACp7AgqxSV7Q7OyFkgcCC7HFgA+ggBBZkiboC6DgEFgBAMIEF2WD6ipxih4S2JrCgzTmYAXQ0ndt7AFD49h85ur2HAEBWmcECAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILWuiVl15s7yFAm7OfQ8sILGiSMUd/or2HADnB3wVoCoEFLecf9xQ2ezi0mMACAAgmsKCp6j0z8spLL/pXPoWnoR3b+UFoIoEFzdDQ0UVmUTAa2ZnVFTRd5/YeABQOjQVALTNY0Dz+EU/HZM+HZhFY0GyONHQ09nloLqcIoSVqjzfOCVLwpBW0jBksaDnHHgqbPRxazAwWtErdEchsFgVDV0HrCSyI4ZgEQB2nCAEAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYJ3bewAANGjFihXjx41LXXLwIYc8/PDDzV0nOyPJ/qYgZwkscsjxxx23Zs2atIVXXHnltddeW+/6/3Txxc8880zqkp/ffffpp5/eVuPblczxX3X11d/+9rfbazzUOvmkk5YuXZq5/Mmnnho+fHj2xwN0BE4Rkuvu+d3v3nvvvfYeBflq/vz59dZVkiRTpkzJ8mCAjkNgkeu2bNnys5/9rL1HQb6a8uc/N/StqQ89VFNTk83BAB2HwCIPPPDHP65evbq9R0H+2b59+yOPPNLQd9esWTNnzpxsjgfoOFyDRR6oqqr6yZ133n7HHe09EPLMzJkzN27c2MgKU6ZM+cQnPpG18bTA0KFD3162rL1HATSbGSzyw9SpUxcvXtzeoyDP7PIqq79On75169bsDAboUMxgkR927Njx4zvu+MUvf9niLWzdunX69OkvvvDCa/Pnv79hw0cffdStW7fevXuPGDHiqKOOOuPMM4cMGRI44HotWrTotFNPTV1S99vpT8+c+cADD8yfP3/jxo0DBg48/PDDL7nkksMOO6xuzW3btk2bOnXKlClvv/325s2b+/fvf8wxx1x88cUHH3JIQz9u48aNCxYsePPNN998883ly5atX79+8+bN27Zt69Klyx577DFw4MCDRo8+7lOfOuXUU3fbbbfGR759+/YHH3zwkUceWbxo0aZNm/bcc89RBx10xhlnnH322cXFxT/9yU9++tOfpq7/rW9/++qrr25oUzNmzHj+uefmzZu3YcOGTZs27bbbbn369Bk9evQnP/nJc849t0ePHrt8JZti06ZNM596KnXJ7rvvfvzYsTP++te6JeXl5Y8/9thZZ5+dutrMp5669NJLU5ecf/75P7r99np/yi/uvvtHP/pR6pLvfOc7V151Ve2fW/8WRN3RIHBnyPTKK688OHnynDlz1q1bV1RUNGjQoPEnnvj5z39+n332ae6mMmVth4FYAouc1qlTp7rLkB977LHXXnsttTmaqKam5ne/+93dP//5Bx98kLq8rKysrKxs9erVTz/99I9//OMJEyb84F//tW/fvjFDb7KKiorrrr12+vTpdUtWrlixcsWKh6dN++Y113z9619PkuTtt9++4oorFi9aVLfO6tWrV69e/dBDD1173XWXX355vVs+9ZRTNmzYkLm8urp669atGzZseOONNyb/93/36dPnezfeeM455zQ0wqVLl1515ZWLUn762rVr165d+/TMmb+/557/uOuupj/Z//7Tn+68885169alLqyqqiorK1u1atVjjz12++23X3HllZdffnmnTp2avtl6PfrII5WVlalLTjr55IkTJ6YGVpIkU6ZMSQussSecMGDAgNRBzpgx499uvrlbt26ZP2XatGmpXxYXF593/vl1X0a9Ba3XRiOprKz8wfe//8ADD6QuLC0tLS0tvff3v//ejTdedNFFrRl2NncYiOUUITkt7aZWaVMFTVFZWfnlyy67+d/+La2u0uzYsePRRx+dOGHCm2++2exRtsL2qqqvXn55al2l+smdd957772rV6++8IILUuuqzo4dO2695Za0YmiujRs3fuuaa37961/X+91ly5Z99jOfWVTfT0+S5PXXX//sZz6zatWqXf6U6urqb3zjG9dff33awTLN5s2bb7v11i9fdllVVVVTBt+IzPODZ5xxxtixY/fYY4/Uhc8999z69etTlxQXF5973nmpS8rLy5988snMH7Fo0aK0V2bsCScMHDiwuUNt/C3IpmaNZHtV1VVXXplWV3UqKir+9/XX/9d997VsJNnfYSCWwCKnXXLJJf369av78vnnnnvh+eebtYVrv/Odp3Y+T9SIdevWXfqlL61du7ZZP6I1Fi5c+Oyzzzaywo9uu+2ySy9t/ErtH/7whzt27GjlSG695ZbS0tK0hbUHuXpnPuqsXbu2KTeU+u4NNzzS5BNbTz311P++/vomrlyv5cuXv/rqq6lLevToMXbs2K5du5500kmpy6urq9NmoZIkmTRpUtqShzPWSZJk6tSp6Q+88MKWDThp4C1oF00cycKFC+vtzlQ33XTTW2+91YIxZHmHgXACi5zWvaTkqp0v5WnWJNZjM2Zk/pb+xIkT/zJ9+sLS0jlz5373e9/r3r176nfXr19/0003tXjA4crLyxuaParT+O0GPv7xj//gX/912sMP//3llxcvWfLWwoVPP/30bbfdNnTo0NTVduzY8X9/9au0x06ePPmN119PW3ja6af/dcaMhaWls5555tLLLmvKs3h65sw//elPqUu6det21dVXP/7EE28uWPD8Cy/ceuut/fv3T11hypQpabfpb5bM21+dcsopXbp0SZJk4hln7HLlYcOGHX300Ts9haef3rRpU+qSmpqaR3feu/r27fvpneutVmveglhtMZJPfupTD02d+tbChXNfeun7P/hB2l+o7du333zzzc0dZ/Z3GAjnGixy3ec+97nf/Od/1t0Ha968eY8//vgpp5zSlMf+x3/8R9qS008//a7/f9vS/v37f+lLXxo8ePBXd76G6bEZMxYtWjRy5MhWj72pPvvZz17+1a/269dv7ty537rmmg8//DBznc9/4Qtf+cpX+vbtO3v27Gu/852ysrLU777y8svHHnts2kOOOeaYq66+etSoUakLi4uLhwwdOmTo0HHjx4874YSKioq6b2Uen+79/e/TlowbP/7nP/957fUu++677w033NClS5df/uIXjT/Bn/zkJ2lL7r777nHjx9f+uXv37hdOmvSxgw8+5+yzt2/fXrfOXXfdNXbs2Ma3XK+amprMuaW6rho7dmyPHj02b95c963S0tIFCxaMHj06df0LJ0166aWX6r6sqqr661//+pnPfKZuySsvv5x2e7bzzj+/c+ed/qfa+rcgShuN5Igjjrjnnntqn/Vuu+128cUXDxww4Iorrkhd54Xnn1+8ePEBBxzQ9NFmeYeBtmAGi1zXpUuXb3zzm6lL7rjjjqacEXvnnXcyz01c98//nLbklFNOOfzww1OX1NTUPPm3v7VgqC0zceLEH/6f/zNkyJCSkpJx48Z98YtfzFznzLPOuummmwYPHlxSUnLqqadmzhvV+2kwd/3sZ2kH1FT9+vU79NBDU5e8//7777zzTt2X69evX7hwYdqjrrvuurSria+++uqSkpKGfkqSJGvXrp0/f37qkjFjxtQdLOuMHj06LXFefeWVxs+NNuSll15KS5/evXsfd9xxtX/u0qXLySefnPaQhx56KG3JhAkTdt9999Ql03aOtmkZJ7AuzDg/2Mq3IFAbjeSab30rrSlPPe20gw8+OG212bNnN32o2d9hoC2YwSIPnHvuuf/3V7+quw/W4kWLpk2bdu655zb+qJfmzk1bMmzYsLRTIbXGjR8/b968nR770ktXZK7XNup+pb/WQTsfM/6xzpVXpn45ZsyYtBVS52NSVVVVzZo165lnnllUWrpy5cqysrItW7ZUV1c3NJgPPvig7lfr016TJEkGDhyYeZAuKSk55hOfmNnwhW6Zb8Qrr7yyXxM+ZXnHjh1vvPHG8ccfv8s102ReE3bKqaemdsDEiRPT1nl42rTrr7++uLi4bklJSckZZ5yReqJq7ty5a9eurb2Gvbq6evpf/pK6hSOOOKLeSZrWvAWxwkfStWvXzHnTJEnGnnDCG2+8kbrktddea/o4s7/DQFsQWOSBoqKib33rW6nnHX5y551nnnlm449an/ER0cMa+H/0sIzqytrHS/fo0eOggw5KXbLnnnumrdO7d+8DDzwwdUnPnj3T1qn3bpmPzZhx0003vfvuu00fT2qoZV7bPryBF3D4sGEzG95m478F1rjGr6+v17Zt2/6a8VuZZ+x83dXxY8f27Nnzo48+qlvy3nvvzZ49e9zOd5y6cNKk1MCqqal5+OGHv/KVryRJMnv27LTfS51U3/0IWvkWBGqLkQwaNCg1SesMzbilXLPexyzvMNBGnCIkP5x62mmppzBWrVr1wB//2PhDNqccPmt1r+8+RkmSdM84w/VRxmPbyMC9905b0rVr17QlgwYNSltSnXLdSa3MjyyeOnXqlVde2awDapIkqedeK8rL077b0KnAxk8RtubFLGt+bTz++ONpZdCnT5+0iZbOnTtnXsb3UMa815gxY9Impep+lzDtlwprp7vSHt76tyBKG40k7Xr2/1mesT80633M8g4DbURgkTe+c+21qV/eddddW7ZsaWT9HhnTPFsa+FCULSnX9tbKnCJqI5l3zc68X2K3jMPYjprMoNpJRUXF92+8sWZXqzVu953vF5U0/AJWNPpGtObFbMETyOykjRs3HjBixH7Dh6f+9+CDD6at9sQTT6T96kCSJBfsfFnVggULlixZsnXr1ieeeCJ1+YSJE9Mu2Ap5C0K03Uga+guY+Rdqj+bcbD3LOwy0EacIyRvHHXfcscce+8ILL9R++d577zV+OmCvnX+LO0mSFcuX17vm8hUr0pb0z3hsfnlm1qy0WZyioqLLv/rVs88+e5999qm70+YXv/CFRu7ClfkirFq5st41lzf6acSZ27nooov+/ZZbGnlIi23YsKFZ11On2rp16/S//CXtTN9555132623pl6oNG3atFGjRpXvPL2Xed+skLcgRNuNZM2aNdXV1ZlnCVdk7Cepd7PbpWzuMNB2zGCRT9ImsRr/R/lRO9/HKEmSZcuWrcxoqSRJZj39dNqSozMem1+WZRTPpEmTrr322pEjR6bexzxztVSZn0q0atWqzBewoqLixRdfbGQ7Hz/mmLQls2bN2p5xljPEtKlTG7lqe5cyr47fc889P/3pT6cueXjatLTzg/vtt99RRx2V9sCQtyBE242ksrKy3rf+mVmz0pY06xOusrnDQNsRWOSTI4444qT6buRYr0GDBqVdP54kye0ZH9n75JNPpt3yO0mSem8XmUcqMz42JPNz9O679941a9Y0spH+/fuPzviVxswbFP3sZz+ryDgllGrvvfdO+739tWvX3nbbbY08ZPny5TfffPMub6+VqSn3lG9E5v0dkiS5cOfZqVWrVv1t57t4XJgxfZUEvQUh2nQkd955Z1rRPjZjRtqvECZJ0qzf7MvmDgNtR2CRZ75z7bVFRU3db7/2ta+lLXn00Ue/8fWvL1y4sKqqasOGDffcc883vv71tHVOPe20bN5ltC3su+++aUvuv//++++///3339+yZcubb7553bXX/uAHP9jldjJvyjV16tTrrrtu6dKlVVVVq1at+uEPf9iUo9o3r7kmbcl//vrXl/zTP8186qkPPvigurq6rKxs5cqVTzzxxB133DHh9NNPHD/+t7/5TXMvdi4tLW3Zp7LUqampybwh1rhx4/baa6+01er+XFxcfN7OH1xYK+otaL02HckrL7/8pUsumT9/fmVl5fvvv3/vvfd++9vfTlvn2GOPbdZdRpNs7TDQplyDRZ4ZOXLkWWedlXmf7nqdetppEyZMSPso5UceeSTz83Pq9OvX73vf+14rB9nuxo0b161bt9R7N1RWVn73hhu+e8MNzdrO+Rdc8Ic//OH1nT8t58HJkx+cPLlZ2znxxBMvuOCCtOvKZ82aNSvjXFJr/DnjE2969uz54pw5mRM2db7x9a+n7QwPTZmS1uW1CfXLX/6y3i2MHz++3iv2ot6C1mvrkcyePbuR6946d+58w3e/29xtZmeHgTZlBov8881rrkm7eXRDOnXqdMePf3zCCSc0ccv9+/f/zW9/20a3ecymvn37Xr3zZzhmGnPkkbu81Ky4uPgnP/1p41coDxw48Pzzz9/lkP79llvOPOusXa7WYtXV1Zmfx3zOOec0UldJklyUcfOq5cuXv/LKK2kL6z0JWKve218lcW9B67XdSEaNGnXiiSc2vs6NN96YeaK5Kdp6h4G2JrDIP0OGDLko5SPhGrfbbrv99ne/+5d/+Zc+ffo0slpRUdHpp5/+l+nTDznkkIgxtr8rr7rq8ssvz7zpQ62TTz75t7/9bUP3MUo1fPjwPz7wwAENnDM95JBDHnjggQEDB6Ytz7z9RHFx8U9/+tMf3X57G/Xrs88+u379+rSFu9xPjv3kJ4dk3BUz80YPw4cPPzLjMvYkSfr37z8+4yNc6kS9Ba3XRiPp3KXL3b/4RUOJWVJS8u+33PL5L3yhuZut1dY7DLQ1pwjJS1/72tf+/OCD9d6+PFOnTp0u+/KX/9fnPz99+vQXnn/+9ddf37Bhw0cffdStW7fevXvvv//+Rx999Blnnlnvp+jktX++/vrTJ0z4r/vumzt37rp164qLi/v17z/miCPOOvvstFuWN27//ff/y1/+Mnny5EcfeaS0tHTz5s177rnnqFGjzjjzzLPPPru4uHhtxh0sM+9HX+v8888/55xzZs6c+dyzz86bN2/t2rWbNm3avn17jx49evTs2bNnz3577jly5MgDR40aNWrUiBEjmj7IzGunDj300MzfckjTqVOnSZMmpf3qw6OPPnrj97/fpUuX1IUXTZr08t//nvbw8847r95bmdeJegtar41G0rVr11tuueWCCy6YPHny3Dlz1q9fX1RUNGjQoPHjx3/hi19sfRu13Q4Dba1T5bbGfv2n7byz+h83StlncPo/H4E8UllZOfb449Nmj6Y89FDaR2gDZFn7loZThEBjFixY8N0bbnj//fcbWuG2W29Nq6u+ffumfq4RQAfkFCHQmOrq6vvvv//Pf/7zxIkTTzrppEMPO6xfv341NTXvvffevHnz/vBf/zVnzpy0h1x66aVNv5UGQEESWMCubdu2bcqUKU25jefHPvaxSy+7LAtDAshl/pUJhDn44IPvve++rl27tvdAANqZGSwgQJ8+fS677LIvf+UrTbxFGUBh879CoDEHH3zw40888fLLL7/8978vWbJk48aNH374YVlZWffu3Xv06DF48ODRo0d/4thjTzzxxLT7GgB0ZG7TAAAUILdpAAAoKAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACNa5vQcA5JzJf7p/04cffvrkUwcNHnzv737TlIeMOfLoMUcdXfvnmpqaB+6/r7ysrFu37p/7wsVFRfX8Q67uRwzfb/+mbH/1qpVLlyxev25dxZaKHdXV3bp132vAgGHD9xu+3/5p26/dct2XRUVF3bt379d/r1GjP7bvvkPqHUZDP/SU0yYMGTqs7ssPN2584/XX3n3nnfLysk6dOpXsvnuvXr2HDB02dOiw7iUlTXkWQMchsIBga1avKi8rS5Jk69YtK1csHzZ8v9ZsraKi4qm/Pb723XdSF5aXly17u2zZ20tffmnu2PEnDhy4d0MP37FjR3l5eXn5shXLlx0x5qgjj/54y4axdMniWTOf3LFjR92STR9+uOnDD1euWL5orwFnnXt+yzYLFCqBBTSoa9fdLrv8ytQli0oXPvP0U3337HfeBZMaelTpwreSJNl3yNBVK1eULnyrNYG1devWR6b+efPmzZ07dznoYx8bNny/Pn36dO7cZdvWrRs2vLfs7aVLFi967plZ50/6TNoD6+bGqqqqNn7wwUtzX3z3nTXzXn15xAEje/Xu3dDKDSkvK5s9a+aOHTv23nufw8cc2XfPfl27di0vK9u06cMVK5Zvqaho8RMECpXAAiJt27Zt5YrlXbp0GTf+03/64x9Wr1pZUV5esvvuLdvac7Nnbd68uXv37hPPPKd3nz51y7uXlOw7ZOi+Q4YeceRR8+fNa2QLXbp02WvAgFNOm3D/ffdUVVWtWbM6M7B2afnyZdu3b+/Ro8dpE88sLi6uXdizV6+evXrtO2Roc7cGdAQucgciLVlcWl1dPXy//Xfr1m3/ESNqamoWLy5t2aY+/HDjsreXJkly3NhxqXWVqkePnp86fuwuN9WlS5cePXslSbJt29YWjKSiojxJkn7996qrK4DGCSwg0qKFC5MkOWDkgUmSHDByVN2SFli1YkWSJLvvscfQYcNbOaqqysrNH21KkqTHHj1a8PDdS3ZPkmT9+nVVlZWtHAnQQQgsIMz7Gza8//6GHj167L3PoCRJ9howoHfvPps2fbh27bst2NqGDe8lSTJgwMDWDKmqqmrdurWPzZheVVXVrVu3oS26IGzYfvt37tylvKxsyoP//erLf3/3nTWVldtaMyqg4LkGCwhTunBBkiQjRh5Yt+SAAw98ac6Lixa+1cgv+jVk69atSZKUZNwB4fXX5s158fnUJRPPPLs26eo8+cRjaY/q3bvP+E+f3KVLl8wflLlykiTFxcWXXHZ57Z9LSkpOOW3C0089sXnzRy//fW7twl69eg3ad8jo0Qc3dPoS6MjMYAExqqurly5ZnPz/84O1RhxwYKdOnZa9vbSqqqrZW6ypSZIkSTq1fmzFxcWHjzlyz379WryFfQYNuuhzXxj/6ZNHHDCyV6/enTp12rRp04I3Xv/z5Aden/9a60cIFBgzWECM5cve3rZt28CBe/fs2atu4e677z5o8L6rV61ctnTJyFEHNWuD3bp3T5Jky5b0myAcctjhhxx2eO2f/3DvPZkrJCl3XqioqFiyqPTvL815+qm/de3aNfXGoZkrN664uHj/EQfsP+KAJEkqKyvffWfNa/NeXb9u7ZwXnuvXr1/aFBrQwQksIMai0oVJkqxd++5//uruzO+Wli5sbmD169d/6ZLF61p0/VadkpKSQw8/olNRpzkvPP/sM09P+uznO3cO+P9e165dhw4bvu+QoVOnPPjB+xuWLF4ssIBUThECAcrLyt5Zs7qRFdatfXfTpg+btc19hw5NkqSsrGzF8uWtGFqSJMnHDj60V6/eFRUVC954vZWbSlVUVLT33nsnSVJRXha4WaAAmMECAiwqXVhTU7PPoMETzjgr87tPPvHYsreXLlr41tHHHNv0bfbu3Wf4fvsve3vps7Of7tX77N69W34teVFR0eFjjpw188n5r80bffAhIZNYtd5bvz5JEp9FCKQxgwUEWLTof25/lal2+eJFpTX/uG69qT51/Ak9evTYUlExbcqDc+e8sH7dusrKypqamqrKyvXr1r7w3Ox/3Di0064vhN9/xAE9evTcunXLwrfebNYYkiR5ff68GdMfffON199bv768vGzHjh1btmxZs3rVjOmPrl+/LkmS/fYf0dxtAoXNDBbQWu+sWbP5o486d+7S0McODt53SLdu3SoqKlatXJF6mXm990dIkmTSZ/5Xz169kiTp1q3bmeec/9TfHlv77rvz5706f96raWsWFxcfefTHm3KvrKKiosMOP+LZ2bPmvzbvoNEHp96TvaFhjDny6DFHHZ0kyfbt21evWrl61cp6Vzv0sCMG7ztklwMAOhSBBbTWotK3kiQZtt9+9d5lKkmSoqKi/UYcsOCN1xeVLqz39/gaUVJScsZZ565etXLpksXr1q3dUlFRXV29227d+vTtO2jw4JEHHtS9e/cmbmrkqINefeXl8vKyRaVvHTT64KaP4dDDjujff6/Vq1auX7euvLx8y5aKoqKi3ffYY8CAgQeOOmhA82/xBRS8TpXb2udz4N9Z/Y9/C+4z2L/8AIBg7VsarsECAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACBY5/YeQPLO6pXtPQQAgEhmsAAAggksAIBgnSq3VbT3GAAACooZLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACDY/wOs/2lZKb2iFgAAAABJRU5ErkJggg==";
+
+// Manually-pasted URL fields (like Product Photo) can contain links to a
+// webpage instead of a direct image file — this catches the obvious cases
+// before even attempting to load them. Airtable's own attachment CDN URLs
+// don't always have a clean file extension, so we allowlist those hosts too.
+function isValidImageUrl(url: string | undefined | null): boolean {
+  if (!url || typeof url !== "string" || url.trim() === "") return false;
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return false;
+
+  // Known image file extensions (ignoring query string / fragment)
+  const pathPart = trimmed.split(/[?#]/)[0];
+  if (/\.(jpe?g|png|webp|gif|avif|svg|bmp|tiff?)$/i.test(pathPart)) return true;
+
+  // Airtable's attachment CDN — signed URLs without a clean extension
+  try {
+    const hostname = new URL(trimmed).hostname;
+    if (/(^|\.)airtableusercontent\.com$/i.test(hostname)) return true;
+    if (/(^|\.)dl\.airtable\.com$/i.test(hostname)) return true;
+  } catch {
+    return false; // malformed URL — treat as invalid
+  }
+
+  return false;
+}
+
+// Resolves the best available image, falling back to the placeholder when
+// the URL is missing or clearly not a direct image link.
+function resolveImageUrl(...candidates: (string | undefined | null)[]): string {
+  for (const c of candidates) {
+    if (isValidImageUrl(c)) return c as string;
+  }
+  return PLACEHOLDER_IMG;
+}
+
+
 export default function FeaturedCollections({
   onBookClick,
   selectedSlabIds = [],
@@ -45,10 +84,23 @@ export default function FeaturedCollections({
   // Reset activePhoto when a new collection is selected
   useEffect(() => {
     if (selectedCollection) {
-      setActivePhoto(selectedCollection.productPhotoUrl || selectedCollection.thumbnailUrl || "");
+      setActivePhoto(resolveImageUrl(selectedCollection.productPhotoUrl, selectedCollection.thumbnailUrl));
     }
   }, [selectedCollection]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Always collapse every filter section fresh, each time the drawer opens
+  useEffect(() => {
+    if (isFilterOpen) {
+      setOpenSections({
+        application: false,
+        finishAndFeel: false,
+        colorGroup: false,
+        sizeFormat: false,
+        visualLook: false
+      });
+    }
+  }, [isFilterOpen]);
   const [visibleCount, setVisibleCount] = useState(24);
 
   useEffect(() => {
@@ -87,11 +139,11 @@ export default function FeaturedCollections({
   const [selectedApplications, setSelectedApplications] = useState<string[]>([]);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    application: true,
+    application: false,
     finishAndFeel: false,
-    colorGroup: true,
+    colorGroup: false,
     sizeFormat: false,
-    visualLook: true
+    visualLook: false
   });
 
   const toggleSection = (section: string) => {
@@ -573,22 +625,17 @@ export default function FeaturedCollections({
                       >
                         {/* Photo — fills the card, square aspect ratio */}
                         <div className="relative w-full aspect-square overflow-hidden bg-[#f0ede8]">
-                          {(col.thumbnailUrl || col.productPhotoUrl) ? (
-                            <img
-                              src={col.thumbnailUrl || col.productPhotoUrl}
-                              alt={col.name}
-                              loading="lazy"
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              onError={(e) => {
-                                const el = e.target as HTMLImageElement;
-                                el.style.display = "none";
-                                el.parentElement!.style.background = col.backgroundGradient;
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-full" style={{ background: col.backgroundGradient }} />
-                          )}
+                          <img
+                            src={resolveImageUrl(col.thumbnailUrl, col.productPhotoUrl)}
+                            alt={col.name}
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            onError={(e) => {
+                              const el = e.target as HTMLImageElement;
+                              if (el.src !== PLACEHOLDER_IMG) el.src = PLACEHOLDER_IMG;
+                            }}
+                          />
                           {/* Finish tag top-left — hidden on mobile per "flat image" request */}
                           <div className="hidden sm:flex absolute top-2.5 left-2.5 gap-1">
                             <span className="text-[7px] font-mono tracking-widest uppercase bg-black/60 px-1.5 py-0.5 backdrop-blur-sm" style={{color:"#ffffff"}}>
@@ -676,15 +723,16 @@ export default function FeaturedCollections({
                 {/* Main photo */}
                 <div className="relative flex-1 overflow-hidden bg-[#1C1A17]">
                   <div className="absolute inset-0" style={{ background: selectedCollection.backgroundGradient, opacity: 0.35 }} />
-                  {activePhoto && (
-                    <img
-                      src={activePhoto}
-                      alt={selectedCollection.name}
-                      referrerPolicy="no-referrer"
-                      className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
-                      onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
-                    />
-                  )}
+                  <img
+                    src={isValidImageUrl(activePhoto) ? activePhoto : PLACEHOLDER_IMG}
+                    alt={selectedCollection.name}
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
+                    onError={(e) => {
+                      const el = e.target as HTMLImageElement;
+                      if (el.src !== PLACEHOLDER_IMG) el.src = PLACEHOLDER_IMG;
+                    }}
+                  />
 
                   {/* Mobile close */}
                   <button
@@ -725,8 +773,8 @@ export default function FeaturedCollections({
                 {/* Thumbnail strip — all photos from Photo attachment field */}
                 {(() => {
                   const allPhotos = [
-                    ...(selectedCollection.productPhotoUrl ? [{ url: selectedCollection.productPhotoUrl, filename: "product-photo" }] : []),
-                    ...((selectedCollection as any).photos || []),
+                    ...(isValidImageUrl(selectedCollection.productPhotoUrl) ? [{ url: selectedCollection.productPhotoUrl, filename: "product-photo" }] : []),
+                    ...(((selectedCollection as any).photos || []).filter((p: any) => isValidImageUrl(p?.url))),
                   ];
                   if (allPhotos.length <= 1) return null;
                   return (
@@ -742,11 +790,14 @@ export default function FeaturedCollections({
                           }`}
                         >
                           <img
-                            src={photo.url}
+                            src={isValidImageUrl(photo.url) ? photo.url : PLACEHOLDER_IMG}
                             alt={`Photo ${i + 1}`}
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover"
-                            onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
+                            onError={(e) => {
+                              const el = e.target as HTMLImageElement;
+                              if (el.src !== PLACEHOLDER_IMG) el.src = PLACEHOLDER_IMG;
+                            }}
                           />
                         </button>
                       ))}
