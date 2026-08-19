@@ -90,6 +90,21 @@ function checkDownloadRateLimit(ip: string): boolean {
   return checkRateLimit("download", ip, DOWNLOAD_RATE_LIMIT, DOWNLOAD_RATE_WINDOW);
 }
 
+const AUDIT_RATE_LIMIT = 5;         // max audit runs per window — this hits Airtable directly, uncached
+const AUDIT_RATE_WINDOW = 600_000;  // 10 minutes
+const auditRateMap = new Map<string, { count: number; resetAt: number }>();
+function checkAuditRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = auditRateMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    auditRateMap.set(ip, { count: 1, resetAt: now + AUDIT_RATE_WINDOW });
+    return true;
+  }
+  if (entry.count >= AUDIT_RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 // ── Input sanitization ────────────────────────────────────────────────────────
 const MAX_MSG_LENGTH = 500;  // max chars per single message
 const MAX_MESSAGES   = 10;   // max messages in conversation history
@@ -766,6 +781,112 @@ function build404Page(): string {
 </html>`;
 }
 
+
+// ── Image URL audit — protected diagnostic endpoint (reuses REFRESH_TOKEN) ───
+// Reports every product whose Product Photo URL or Photo attachments don't
+// look like a real image file. Visit in a browser: renders an HTML report.
+function isLikelyImageUrl(url: string | undefined | null): boolean {
+  if (!url || typeof url !== "string" || url.trim() === "") return false;
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return false;
+  const pathPart = trimmed.split(/[?#]/)[0];
+  if (/\.(jpe?g|png|webp|gif|avif|svg|bmp|tiff?)$/i.test(pathPart)) return true;
+  try {
+    const hostname = new URL(trimmed).hostname;
+    if (/(^|\.)airtableusercontent\.com$/i.test(hostname)) return true;
+    if (/(^|\.)dl\.airtable\.com$/i.test(hostname)) return true;
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+async function handleImageAudit(request: Request, env: Env, CORS: Record<string,string>, clientIP: string): Promise<Response> {
+  try {
+    const url = new URL(request.url);
+    if (url.searchParams.get("token") !== env.REFRESH_TOKEN) {
+      return new Response(JSON.stringify({ error: "Unauthorized." }), {
+        status: 401, headers: { "Content-Type": "application/json", ...CORS },
+      });
+    }
+
+    if (!checkAuditRateLimit(clientIP)) {
+      return new Response(JSON.stringify({ error: "Too many audit requests. This endpoint hits Airtable directly — please wait a few minutes." }), {
+        status: 429, headers: { "Content-Type": "application/json", "Retry-After": "600", ...CORS, ...SECURITY_HEADERS },
+      });
+    }
+
+    const records = await fetchFromAirtable(env) as any[];
+    const problems: { name: string; airtableId: string; issue: string; value: string }[] = [];
+
+    for (const r of records) {
+      if (!isLikelyImageUrl(r.productPhotoUrl)) {
+        problems.push({
+          name: r.name || "(unnamed)",
+          airtableId: r.airtableId,
+          issue: r.productPhotoUrl ? "Product Photo doesn\u2019t look like an image URL" : "Product Photo is empty",
+          value: r.productPhotoUrl || "(empty)",
+        });
+      }
+      const photos = Array.isArray(r.photos) ? r.photos : [];
+      const badPhotos = photos.filter((p: any) => !isLikelyImageUrl(p?.url));
+      if (photos.length === 0 && !isLikelyImageUrl(r.thumbnailUrl)) {
+        problems.push({
+          name: r.name || "(unnamed)",
+          airtableId: r.airtableId,
+          issue: "No usable Photo attachments found",
+          value: "(empty)",
+        });
+      } else if (badPhotos.length > 0) {
+        for (const bp of badPhotos) {
+          problems.push({
+            name: r.name || "(unnamed)",
+            airtableId: r.airtableId,
+            issue: "A Photo attachment doesn\u2019t look like an image URL",
+            value: bp?.url || "(empty)",
+          });
+        }
+      }
+    }
+
+    const wantsJson = url.searchParams.get("format") === "json";
+    if (wantsJson) {
+      return new Response(JSON.stringify({ totalRecords: records.length, problemCount: problems.length, problems }), {
+        headers: { "Content-Type": "application/json", ...CORS, ...SECURITY_HEADERS },
+      });
+    }
+
+    const rows = problems.map(p => `
+      <tr>
+        <td style="padding:10px;border-bottom:1px solid #eee;">${p.name}</td>
+        <td style="padding:10px;border-bottom:1px solid #eee;color:#B45309;">${p.issue}</td>
+        <td style="padding:10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;word-break:break-all;">${p.value}</td>
+        <td style="padding:10px;border-bottom:1px solid #eee;font-family:monospace;font-size:11px;color:#999;">${p.airtableId}</td>
+      </tr>`).join("");
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Image URL Audit — Italgres</title>
+    <style>body{font-family:Arial,sans-serif;background:#FAF9F6;padding:40px;color:#1C1A17;}
+    h1{color:#1C1A17;} .summary{background:#fff;border:1px solid #eee;padding:20px;margin-bottom:20px;border-radius:4px;}
+    table{width:100%;border-collapse:collapse;background:#fff;border-radius:4px;overflow:hidden;}
+    th{background:#1C1A17;color:#fff;text-align:left;padding:10px;font-size:13px;}
+    td{font-size:13px;}</style></head><body>
+    <h1>Image URL Audit</h1>
+    <div class="summary">Scanned <strong>${records.length}</strong> products &mdash; found <strong style="color:${problems.length > 0 ? '#B45309' : '#065F46'}">${problems.length}</strong> with missing or invalid image references.</div>
+    ${problems.length === 0 ? "<p>No issues found. Every product has a usable image.</p>" : `
+    <table><tr><th>Product</th><th>Issue</th><th>Value</th><th>Airtable Record ID</th></tr>${rows}</table>`}
+    </body></html>`;
+
+    return new Response(html, {
+      headers: { "Content-Type": "text/html;charset=UTF-8", ...SECURITY_HEADERS },
+    });
+  } catch (err) {
+    console.error("Image audit error:", err);
+    return new Response(JSON.stringify({ error: "Audit failed." }), {
+      status: 500, headers: { "Content-Type": "application/json", ...CORS },
+    });
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -792,6 +913,11 @@ export default {
     if (url.pathname === "/api/submit" && request.method === "POST") {
       const clientIP = request.headers.get("CF-Connecting-IP") || "unknown";
       return handleSubmit(request, env, CORS, clientIP);
+    }
+
+    if (url.pathname === "/api/image-audit" && request.method === "GET") {
+      const clientIP = request.headers.get("CF-Connecting-IP") || "unknown";
+      return handleImageAudit(request, env, CORS, clientIP);
     }
 
     if (url.pathname === "/api/download" && request.method === "GET") {
