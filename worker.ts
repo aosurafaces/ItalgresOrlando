@@ -791,89 +791,200 @@ function isLikelyImageUrl(url: string | undefined | null): boolean {
   if (!/^https?:\/\//i.test(trimmed)) return false;
   const pathPart = trimmed.split(/[?#]/)[0];
   if (/\.(jpe?g|png|webp|gif|avif|svg|bmp|tiff?)$/i.test(pathPart)) return true;
+  let hostname = "";
   try {
-    const hostname = new URL(trimmed).hostname;
-    if (/(^|\.)airtableusercontent\.com$/i.test(hostname)) return true;
-    if (/(^|\.)dl\.airtable\.com$/i.test(hostname)) return true;
+    hostname = new URL(trimmed).hostname;
   } catch {
-    return false;
+    hostname = "";
   }
+  if (hostname && (/(^|\.)airtableusercontent\.com$/i.test(hostname) || /(^|\.)dl\.airtable\.com$/i.test(hostname))) {
+    return true;
+  }
+  // Image-optimization/proxy URLs (Next.js /_next/image, Cloudinary, Imgix, etc.)
+  // embed the real image — extension and all — inside a query parameter rather
+  // than at the end of the outer path. Catch that pattern generically.
+  if (/\.(jpe?g|png|webp|gif|avif|bmp)(\?|&|%3f|%26|$)/i.test(trimmed)) return true;
   return false;
 }
 
 async function handleImageAudit(request: Request, env: Env, CORS: Record<string,string>, clientIP: string): Promise<Response> {
   try {
     const url = new URL(request.url);
-    if (url.searchParams.get("token") !== env.REFRESH_TOKEN) {
-      return new Response(JSON.stringify({ error: "Unauthorized." }), {
-        status: 401, headers: { "Content-Type": "application/json", ...CORS },
-      });
-    }
 
+    // No separate secret/token needed here — Cloudflare Access (Zero Trust)
+    // already gates the entire italgresorlando.com domain with no path
+    // exclusions, so anyone who reaches this route has already authenticated
+    // via OTP and is on the approved email list. Rate limiting below still
+    // protects Airtable's API from being hammered by a logged-in session.
     if (!checkAuditRateLimit(clientIP)) {
-      return new Response(JSON.stringify({ error: "Too many audit requests. This endpoint hits Airtable directly — please wait a few minutes." }), {
+      return new Response(JSON.stringify({ error: "Too many audit requests. This endpoint hits Airtable and live image servers directly — please wait a few minutes." }), {
         status: 429, headers: { "Content-Type": "application/json", "Retry-After": "600", ...CORS, ...SECURITY_HEADERS },
       });
     }
 
     const records = await fetchFromAirtable(env) as any[];
-    const problems: { name: string; airtableId: string; issue: string; value: string }[] = [];
 
-    for (const r of records) {
-      if (!isLikelyImageUrl(r.productPhotoUrl)) {
-        problems.push({
-          name: r.name || "(unnamed)",
-          airtableId: r.airtableId,
-          issue: r.productPhotoUrl ? "Product Photo doesn\u2019t look like an image URL" : "Product Photo is empty",
-          value: r.productPhotoUrl || "(empty)",
-        });
+    // ── Live-check a single URL: actually fetch it and classify the failure ──
+    async function checkUrlLive(candidate: string | undefined | null): Promise<{ ok: boolean; reason: string }> {
+      if (!isLikelyImageUrl(candidate)) {
+        return { ok: false, reason: candidate ? "not-image-url" : "empty" };
       }
-      const photos = Array.isArray(r.photos) ? r.photos : [];
-      const badPhotos = photos.filter((p: any) => !isLikelyImageUrl(p?.url));
-      if (photos.length === 0 && !isLikelyImageUrl(r.thumbnailUrl)) {
-        problems.push({
-          name: r.name || "(unnamed)",
-          airtableId: r.airtableId,
-          issue: "No usable Photo attachments found",
-          value: "(empty)",
-        });
-      } else if (badPhotos.length > 0) {
-        for (const bp of badPhotos) {
-          problems.push({
-            name: r.name || "(unnamed)",
-            airtableId: r.airtableId,
-            issue: "A Photo attachment doesn\u2019t look like an image URL",
-            value: bp?.url || "(empty)",
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 6000);
+        let res: Response;
+        try {
+          res = await fetch(candidate as string, {
+            method: "HEAD",
+            signal: controller.signal,
+            headers: { "User-Agent": "Mozilla/5.0 (compatible; ItalgresImageAudit/1.0)" },
           });
+        } finally {
+          clearTimeout(timeout);
         }
+        // Some hosts block HEAD but allow GET — retry once if HEAD looks wrong
+        if (res.status === 405 || res.status === 501) {
+          const controller2 = new AbortController();
+          const timeout2 = setTimeout(() => controller2.abort(), 6000);
+          try {
+            res = await fetch(candidate as string, {
+              method: "GET",
+              signal: controller2.signal,
+              headers: { "User-Agent": "Mozilla/5.0 (compatible; ItalgresImageAudit/1.0)", "Range": "bytes=0-1024" },
+            });
+          } finally {
+            clearTimeout(timeout2);
+          }
+        }
+
+        if (res.status === 404 || res.status === 410) return { ok: false, reason: "not-found" };
+        if (res.status === 401 || res.status === 403) return { ok: false, reason: "blocked" };
+        if (res.status >= 500) return { ok: false, reason: "server-error" };
+        if (!res.ok) return { ok: false, reason: `http-${res.status}` };
+
+        const contentType = res.headers.get("Content-Type") || "";
+        if (contentType && !contentType.startsWith("image/")) return { ok: false, reason: "not-an-image" };
+
+        return { ok: true, reason: "" };
+      } catch (err: any) {
+        if (err?.name === "AbortError") return { ok: false, reason: "timeout" };
+        return { ok: false, reason: "unreachable" };
       }
     }
+
+    // Plain-language explanations for Carlos — no HTTP jargon
+    const REASON_TEXT: Record<string, string> = {
+      "empty":          "No photo has been added for this field.",
+      "not-image-url":  "This link doesn\u2019t point directly to a photo file \u2014 it looks like a link to a webpage instead. It needs to be replaced with a direct image link.",
+      "not-found":      "The photo could not be found at this link. It may have been moved, renamed, or deleted from the original website.",
+      "blocked":        "The website hosting this photo is blocking automatic access (a common anti-theft protection). It may still work for real visitors, but should be double-checked.",
+      "server-error":   "The website hosting this photo is currently having problems. This may resolve on its own \u2014 worth checking again later.",
+      "not-an-image":   "This link returns a webpage or document, not an actual photo file.",
+      "timeout":        "The website hosting this photo did not respond in time. It may be slow or temporarily down.",
+      "unreachable":    "The website hosting this photo could not be reached at all.",
+    };
+    function explain(reason: string): string {
+      return REASON_TEXT[reason] || "This photo could not be verified.";
+    }
+
+    // ── Check both fields for every product, with limited concurrency ────────
+    const CONCURRENCY = 8;
+    type ProductResult = {
+      name: string; airtableId: string;
+      productPhoto: { ok: boolean; reason: string; value: string };
+      photoAttachment: { ok: boolean; reason: string; value: string };
+    };
+    const results: ProductResult[] = [];
+
+    for (let i = 0; i < records.length; i += CONCURRENCY) {
+      const batch = records.slice(i, i + CONCURRENCY);
+      const batchResults = await Promise.all(batch.map(async (r) => {
+        const photos = Array.isArray(r.photos) ? r.photos : [];
+        const firstPhotoUrl = photos.length > 0 ? photos[0]?.url : r.thumbnailUrl;
+
+        const [ppCheck, photoCheck] = await Promise.all([
+          checkUrlLive(r.productPhotoUrl),
+          checkUrlLive(firstPhotoUrl),
+        ]);
+
+        return {
+          name: r.name || "(unnamed)",
+          airtableId: r.airtableId,
+          productPhoto: { ...ppCheck, value: r.productPhotoUrl || "(empty)" },
+          photoAttachment: { ...photoCheck, value: firstPhotoUrl || "(empty)" },
+        };
+      }));
+      results.push(...batchResults);
+    }
+
+    // A product only actually breaks in the popup if BOTH fields fail —
+    // the site cascades to whichever field works. One broken field with a
+    // working fallback is a data-quality note, not a customer-facing bug.
+    const customerFacing = results.filter(r => !r.productPhoto.ok && !r.photoAttachment.ok);
+    const dataQualityOnly = results.filter(r =>
+      (r.productPhoto.ok && !r.photoAttachment.ok) || (!r.productPhoto.ok && r.photoAttachment.ok)
+    );
 
     const wantsJson = url.searchParams.get("format") === "json";
     if (wantsJson) {
-      return new Response(JSON.stringify({ totalRecords: records.length, problemCount: problems.length, problems }), {
-        headers: { "Content-Type": "application/json", ...CORS, ...SECURITY_HEADERS },
-      });
+      return new Response(JSON.stringify({
+        totalRecords: records.length,
+        customerFacingCount: customerFacing.length,
+        dataQualityCount: dataQualityOnly.length,
+        customerFacing, dataQualityOnly,
+      }), { headers: { "Content-Type": "application/json", ...CORS, ...SECURITY_HEADERS } });
     }
 
-    const rows = problems.map(p => `
+    function rowHtml(r: ProductResult, highlightBoth: boolean): string {
+      const ppBad = !r.productPhoto.ok;
+      const phBad = !r.photoAttachment.ok;
+      return `
       <tr>
-        <td style="padding:10px;border-bottom:1px solid #eee;">${p.name}</td>
-        <td style="padding:10px;border-bottom:1px solid #eee;color:#B45309;">${p.issue}</td>
-        <td style="padding:10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;word-break:break-all;">${p.value}</td>
-        <td style="padding:10px;border-bottom:1px solid #eee;font-family:monospace;font-size:11px;color:#999;">${p.airtableId}</td>
-      </tr>`).join("");
+        <td style="padding:12px;border-bottom:1px solid #eee;font-weight:600;">${r.name}</td>
+        <td style="padding:12px;border-bottom:1px solid #eee;${ppBad ? 'color:#B91C1C;' : 'color:#065F46;'}">
+          ${ppBad ? "\u2717 " + explain(r.productPhoto.reason) : "\u2713 OK"}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #eee;${phBad ? 'color:#B91C1C;' : 'color:#065F46;'}">
+          ${phBad ? "\u2717 " + explain(r.photoAttachment.reason) : "\u2713 OK"}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #eee;font-family:monospace;font-size:11px;color:#999;">${r.airtableId}</td>
+      </tr>`;
+    }
 
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Image URL Audit — Italgres</title>
-    <style>body{font-family:Arial,sans-serif;background:#FAF9F6;padding:40px;color:#1C1A17;}
-    h1{color:#1C1A17;} .summary{background:#fff;border:1px solid #eee;padding:20px;margin-bottom:20px;border-radius:4px;}
-    table{width:100%;border-collapse:collapse;background:#fff;border-radius:4px;overflow:hidden;}
-    th{background:#1C1A17;color:#fff;text-align:left;padding:10px;font-size:13px;}
-    td{font-size:13px;}</style></head><body>
-    <h1>Image URL Audit</h1>
-    <div class="summary">Scanned <strong>${records.length}</strong> products &mdash; found <strong style="color:${problems.length > 0 ? '#B45309' : '#065F46'}">${problems.length}</strong> with missing or invalid image references.</div>
-    ${problems.length === 0 ? "<p>No issues found. Every product has a usable image.</p>" : `
-    <table><tr><th>Product</th><th>Issue</th><th>Value</th><th>Airtable Record ID</th></tr>${rows}</table>`}
+    const customerRows = customerFacing.map(r => rowHtml(r, true)).join("");
+    const dataQualityRows = dataQualityOnly.map(r => rowHtml(r, false)).join("");
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Image Audit — Italgres</title>
+    <style>
+      body{font-family:Arial,sans-serif;background:#FAF9F6;padding:40px;color:#1C1A17;}
+      h1{color:#1C1A17;margin-bottom:4px;} h2{color:#1C1A17;margin-top:40px;}
+      .subtitle{color:#6B7280;margin-bottom:24px;}
+      .summary{background:#fff;border:1px solid #eee;padding:20px;margin-bottom:24px;border-radius:4px;}
+      .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;margin-left:8px;}
+      .badge-critical{background:#FEF2F2;color:#B91C1C;}
+      .badge-info{background:#FFFBEB;color:#B45309;}
+      table{width:100%;border-collapse:collapse;background:#fff;border-radius:4px;overflow:hidden;margin-bottom:20px;}
+      th{background:#1C1A17;color:#fff;text-align:left;padding:12px;font-size:13px;}
+      td{font-size:13px;}
+      .note{background:#EFF6FF;border-left:4px solid #0D9488;padding:14px 18px;margin:16px 0;font-size:13px;color:#1C1A17;}
+    </style></head><body>
+    <h1>Image Audit Report</h1>
+    <p class="subtitle">Live-verified against every source website \u2014 not just a pattern check.</p>
+    <div class="summary">
+      Scanned <strong>${records.length}</strong> products.<br>
+      <span class="badge badge-critical">${customerFacing.length}</span> products will show \u201cNo Image Available\u201d to customers right now (both photo fields failed).<br>
+      <span class="badge badge-info">${dataQualityOnly.length}</span> products have one broken field, but still display fine thanks to a fallback \u2014 worth fixing, not urgent.
+    </div>
+
+    <h2>Showing "No Image Available" to customers \u2014 fix these first</h2>
+    ${customerFacing.length === 0 ? "<p>None. Every product has at least one working image.</p>" : `
+    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th>Airtable Record ID</th></tr>${customerRows}</table>`}
+
+    <h2>Working, but one field needs cleanup</h2>
+    <div class="note">These products display correctly today because the site automatically falls back to whichever photo field works. Fixing the broken field isn\u2019t urgent, but keeps the data clean for future features (like a full photo gallery).</div>
+    ${dataQualityOnly.length === 0 ? "<p>None.</p>" : `
+    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th>Airtable Record ID</th></tr>${dataQualityRows}</table>`}
+
     </body></html>`;
 
     return new Response(html, {
