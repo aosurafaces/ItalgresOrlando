@@ -817,7 +817,7 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
     // via OTP and is on the approved email list. Rate limiting below still
     // protects Airtable's API from being hammered by a logged-in session.
     if (!checkAuditRateLimit(clientIP)) {
-      return new Response(JSON.stringify({ error: "Too many audit requests. This endpoint hits Airtable and live image servers directly — please wait a few minutes." }), {
+      return new Response(JSON.stringify({ error: "Too many audit requests. Please wait a few minutes." }), {
         status: 429, headers: { "Content-Type": "application/json", "Retry-After": "600", ...CORS, ...SECURITY_HEADERS },
       });
     }
@@ -825,6 +825,12 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
     const records = await fetchFromAirtable(env) as any[];
 
     // ── Live-check a single URL: actually fetch it and classify the failure ──
+    // Only ever called for ONE product at a time (via ?verify=recordId), never
+    // across the whole catalog — Cloudflare Workers cap outbound subrequests
+    // per invocation (as low as 50 on some plans), and a catalog this size
+    // (1000+ products x 2 fields) blows through that ceiling almost
+    // immediately, making every fetch past the limit fail with a fake
+    // "unreachable" error that has nothing to do with the actual image.
     async function checkUrlLive(candidate: string | undefined | null): Promise<{ ok: boolean; reason: string }> {
       if (!isLikelyImageUrl(candidate)) {
         return { ok: false, reason: candidate ? "not-image-url" : "empty" };
@@ -842,7 +848,6 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
         } finally {
           clearTimeout(timeout);
         }
-        // Some hosts block HEAD but allow GET — retry once if HEAD looks wrong
         if (res.status === 405 || res.status === 501) {
           const controller2 = new AbortController();
           const timeout2 = setTimeout(() => controller2.abort(), 6000);
@@ -856,15 +861,12 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
             clearTimeout(timeout2);
           }
         }
-
         if (res.status === 404 || res.status === 410) return { ok: false, reason: "not-found" };
         if (res.status === 401 || res.status === 403) return { ok: false, reason: "blocked" };
         if (res.status >= 500) return { ok: false, reason: "server-error" };
         if (!res.ok) return { ok: false, reason: `http-${res.status}` };
-
         const contentType = res.headers.get("Content-Type") || "";
         if (contentType && !contentType.startsWith("image/")) return { ok: false, reason: "not-an-image" };
-
         return { ok: true, reason: "" };
       } catch (err: any) {
         if (err?.name === "AbortError") return { ok: false, reason: "timeout" };
@@ -872,7 +874,6 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
       }
     }
 
-    // Plain-language explanations for Carlos — no HTTP jargon
     const REASON_TEXT: Record<string, string> = {
       "empty":          "No photo has been added for this field.",
       "not-image-url":  "This link doesn\u2019t point directly to a photo file \u2014 it looks like a link to a webpage instead. It needs to be replaced with a direct image link.",
@@ -887,39 +888,60 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
       return REASON_TEXT[reason] || "This photo could not be verified.";
     }
 
-    // ── Check both fields for every product, with limited concurrency ────────
-    const CONCURRENCY = 8;
+    // ── Single-product live verify: /api/image-audit?verify=recTxxxxx ────────
+    // Safe at any catalog size since it only ever makes 2 outbound requests.
+    const verifyId = url.searchParams.get("verify");
+    if (verifyId) {
+      const record = records.find((r: any) => r.airtableId === verifyId);
+      if (!record) {
+        return new Response(JSON.stringify({ error: "Record not found." }), {
+          status: 404, headers: { "Content-Type": "application/json", ...CORS },
+        });
+      }
+      const photos = Array.isArray(record.photos) ? record.photos : [];
+      const firstPhotoUrl = photos.length > 0 ? photos[0]?.url : record.thumbnailUrl;
+      const [ppCheck, photoCheck] = await Promise.all([
+        checkUrlLive(record.productPhotoUrl),
+        checkUrlLive(firstPhotoUrl),
+      ]);
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Live Check — ${record.name}</title>
+      <style>body{font-family:Arial,sans-serif;background:#FAF9F6;padding:40px;color:#1C1A17;max-width:600px;margin:0 auto;}
+      h1{font-size:20px;} .row{background:#fff;border:1px solid #eee;padding:16px;border-radius:4px;margin-bottom:12px;}
+      .ok{color:#065F46;font-weight:600;} .bad{color:#B91C1C;font-weight:600;}
+      a{color:#0D9488;}</style></head><body>
+      <p><a href="/api/image-audit">\u2190 Back to full report</a></p>
+      <h1>${record.name}</h1>
+      <div class="row"><strong>Product Photo:</strong><br>
+        <span class="${ppCheck.ok ? "ok" : "bad"}">${ppCheck.ok ? "\u2713 Verified working" : "\u2717 " + explain(ppCheck.reason)}</span><br>
+        <small style="word-break:break-all;color:#999;">${record.productPhotoUrl || "(empty)"}</small></div>
+      <div class="row"><strong>Photo Attachment:</strong><br>
+        <span class="${photoCheck.ok ? "ok" : "bad"}">${photoCheck.ok ? "\u2713 Verified working" : "\u2717 " + explain(photoCheck.reason)}</span><br>
+        <small style="word-break:break-all;color:#999;">${firstPhotoUrl || "(empty)"}</small></div>
+      </body></html>`;
+      return new Response(html, { headers: { "Content-Type": "text/html;charset=UTF-8", ...SECURITY_HEADERS } });
+    }
+
+    // ── Full catalog scan: pattern-check only — reliable at any catalog size ─
+    // since it makes zero outbound network requests. Use "Live check" links
+    // per row (or ?verify=recordId) to truly verify any specific product.
     type ProductResult = {
       name: string; airtableId: string;
       productPhoto: { ok: boolean; reason: string; value: string };
       photoAttachment: { ok: boolean; reason: string; value: string };
     };
-    const results: ProductResult[] = [];
+    const results: ProductResult[] = records.map((r: any) => {
+      const photos = Array.isArray(r.photos) ? r.photos : [];
+      const firstPhotoUrl = photos.length > 0 ? photos[0]?.url : r.thumbnailUrl;
+      const ppOk = isLikelyImageUrl(r.productPhotoUrl);
+      const phOk = isLikelyImageUrl(firstPhotoUrl);
+      return {
+        name: r.name || "(unnamed)",
+        airtableId: r.airtableId,
+        productPhoto: { ok: ppOk, reason: ppOk ? "" : (r.productPhotoUrl ? "not-image-url" : "empty"), value: r.productPhotoUrl || "(empty)" },
+        photoAttachment: { ok: phOk, reason: phOk ? "" : (firstPhotoUrl ? "not-image-url" : "empty"), value: firstPhotoUrl || "(empty)" },
+      };
+    });
 
-    for (let i = 0; i < records.length; i += CONCURRENCY) {
-      const batch = records.slice(i, i + CONCURRENCY);
-      const batchResults = await Promise.all(batch.map(async (r) => {
-        const photos = Array.isArray(r.photos) ? r.photos : [];
-        const firstPhotoUrl = photos.length > 0 ? photos[0]?.url : r.thumbnailUrl;
-
-        const [ppCheck, photoCheck] = await Promise.all([
-          checkUrlLive(r.productPhotoUrl),
-          checkUrlLive(firstPhotoUrl),
-        ]);
-
-        return {
-          name: r.name || "(unnamed)",
-          airtableId: r.airtableId,
-          productPhoto: { ...ppCheck, value: r.productPhotoUrl || "(empty)" },
-          photoAttachment: { ...photoCheck, value: firstPhotoUrl || "(empty)" },
-        };
-      }));
-      results.push(...batchResults);
-    }
-
-    // A product only actually breaks in the popup if BOTH fields fail —
-    // the site cascades to whichever field works. One broken field with a
-    // working fallback is a data-quality note, not a customer-facing bug.
     const customerFacing = results.filter(r => !r.productPhoto.ok && !r.photoAttachment.ok);
     const dataQualityOnly = results.filter(r =>
       (r.productPhoto.ok && !r.photoAttachment.ok) || (!r.productPhoto.ok && r.photoAttachment.ok)
@@ -935,24 +957,24 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
       }), { headers: { "Content-Type": "application/json", ...CORS, ...SECURITY_HEADERS } });
     }
 
-    function rowHtml(r: ProductResult, highlightBoth: boolean): string {
+    function rowHtml(r: ProductResult): string {
       const ppBad = !r.productPhoto.ok;
       const phBad = !r.photoAttachment.ok;
       return `
       <tr>
         <td style="padding:12px;border-bottom:1px solid #eee;font-weight:600;">${r.name}</td>
         <td style="padding:12px;border-bottom:1px solid #eee;${ppBad ? 'color:#B91C1C;' : 'color:#065F46;'}">
-          ${ppBad ? "\u2717 " + explain(r.productPhoto.reason) : "\u2713 OK"}
+          ${ppBad ? "\u2717 " + explain(r.productPhoto.reason) : "\u2713 Looks OK"}
         </td>
         <td style="padding:12px;border-bottom:1px solid #eee;${phBad ? 'color:#B91C1C;' : 'color:#065F46;'}">
-          ${phBad ? "\u2717 " + explain(r.photoAttachment.reason) : "\u2713 OK"}
+          ${phBad ? "\u2717 " + explain(r.photoAttachment.reason) : "\u2713 Looks OK"}
         </td>
-        <td style="padding:12px;border-bottom:1px solid #eee;font-family:monospace;font-size:11px;color:#999;">${r.airtableId}</td>
+        <td style="padding:12px;border-bottom:1px solid #eee;"><a href="?verify=${r.airtableId}">Live check \u2192</a></td>
       </tr>`;
     }
 
-    const customerRows = customerFacing.map(r => rowHtml(r, true)).join("");
-    const dataQualityRows = dataQualityOnly.map(r => rowHtml(r, false)).join("");
+    const customerRows = customerFacing.map(r => rowHtml(r)).join("");
+    const dataQualityRows = dataQualityOnly.map(r => rowHtml(r)).join("");
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Image Audit — Italgres</title>
     <style>
@@ -969,21 +991,21 @@ async function handleImageAudit(request: Request, env: Env, CORS: Record<string,
       .note{background:#EFF6FF;border-left:4px solid #0D9488;padding:14px 18px;margin:16px 0;font-size:13px;color:#1C1A17;}
     </style></head><body>
     <h1>Image Audit Report</h1>
-    <p class="subtitle">Live-verified against every source website \u2014 not just a pattern check.</p>
+    <p class="subtitle">Pattern-checked instantly across the whole catalog. Click "Live check" on any row to actually verify that specific product's images.</p>
     <div class="summary">
       Scanned <strong>${records.length}</strong> products.<br>
-      <span class="badge badge-critical">${customerFacing.length}</span> products will show \u201cNo Image Available\u201d to customers right now (both photo fields failed).<br>
-      <span class="badge badge-info">${dataQualityOnly.length}</span> products have one broken field, but still display fine thanks to a fallback \u2014 worth fixing, not urgent.
+      <span class="badge badge-critical">${customerFacing.length}</span> products will show \u201cNo Image Available\u201d to customers (neither field looks like a valid image link).<br>
+      <span class="badge badge-info">${dataQualityOnly.length}</span> products have one field that doesn\u2019t look valid, but a fallback is covering for it.
     </div>
 
     <h2>Showing "No Image Available" to customers \u2014 fix these first</h2>
-    ${customerFacing.length === 0 ? "<p>None. Every product has at least one working image.</p>" : `
-    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th>Airtable Record ID</th></tr>${customerRows}</table>`}
+    ${customerFacing.length === 0 ? "<p>None found by pattern check.</p>" : `
+    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th></th></tr>${customerRows}</table>`}
 
     <h2>Working, but one field needs cleanup</h2>
-    <div class="note">These products display correctly today because the site automatically falls back to whichever photo field works. Fixing the broken field isn\u2019t urgent, but keeps the data clean for future features (like a full photo gallery).</div>
+    <div class="note">These products display correctly today because the site automatically falls back to whichever photo field works.</div>
     ${dataQualityOnly.length === 0 ? "<p>None.</p>" : `
-    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th>Airtable Record ID</th></tr>${dataQualityRows}</table>`}
+    <table><tr><th>Product</th><th>Product Photo</th><th>Photo Attachment</th><th></th></tr>${dataQualityRows}</table>`}
 
     </body></html>`;
 
