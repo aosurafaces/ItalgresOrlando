@@ -40,13 +40,21 @@ function isValidImageUrl(url: string | undefined | null): boolean {
   if (/\.(jpe?g|png|webp|gif|avif|svg|bmp|tiff?)$/i.test(pathPart)) return true;
 
   // Airtable's attachment CDN — signed URLs without a clean extension
+  let hostname = "";
   try {
-    const hostname = new URL(trimmed).hostname;
-    if (/(^|\.)airtableusercontent\.com$/i.test(hostname)) return true;
-    if (/(^|\.)dl\.airtable\.com$/i.test(hostname)) return true;
+    hostname = new URL(trimmed).hostname;
   } catch {
-    return false; // malformed URL — treat as invalid
+    hostname = "";
   }
+  if (hostname && (/(^|\.)airtableusercontent\.com$/i.test(hostname) || /(^|\.)dl\.airtable\.com$/i.test(hostname))) {
+    return true;
+  }
+
+  // Image-optimization/proxy URLs (Next.js /_next/image, Cloudinary, Imgix, etc.)
+  // often embed the real image — extension and all — inside a query parameter
+  // rather than at the end of the outer path. Catch that pattern generically
+  // instead of hardcoding every possible proxy service by hostname.
+  if (/\.(jpe?g|png|webp|gif|avif|bmp)(\?|&|%3f|%26|$)/i.test(trimmed)) return true;
 
   return false;
 }
@@ -629,7 +637,7 @@ export default function FeaturedCollections({
                             src={resolveImageUrl(col.thumbnailUrl, col.productPhotoUrl)}
                             alt={col.name}
                             loading="lazy"
-                            referrerPolicy="no-referrer"
+                            referrerPolicy="strict-origin-when-cross-origin"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             onError={(e) => {
                               const el = e.target as HTMLImageElement;
@@ -726,7 +734,7 @@ export default function FeaturedCollections({
                   <img
                     src={isValidImageUrl(activePhoto) ? activePhoto : PLACEHOLDER_IMG}
                     alt={selectedCollection.name}
-                    referrerPolicy="no-referrer"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
                     onError={(e) => {
                       const el = e.target as HTMLImageElement;
@@ -792,7 +800,7 @@ export default function FeaturedCollections({
                           <img
                             src={isValidImageUrl(photo.url) ? photo.url : PLACEHOLDER_IMG}
                             alt={`Photo ${i + 1}`}
-                            referrerPolicy="no-referrer"
+                            referrerPolicy="strict-origin-when-cross-origin"
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               const el = e.target as HTMLImageElement;
