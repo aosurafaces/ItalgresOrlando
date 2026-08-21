@@ -294,8 +294,6 @@ export default function FeaturedCollections({
   const filteredCollections = collections.filter(col => {
     // 1. Search Query
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      
       const fFeel = getFinishAndFeel(col).toLowerCase();
       const finish = col.finish.toLowerCase();
       const cGroup = getColorGroup(col).toLowerCase();
@@ -308,32 +306,22 @@ export default function FeaturedCollections({
       const name = col.name.toLowerCase();
       const category = col.category.toLowerCase();
       const origin = col.origin.toLowerCase();
-      
-      const matchesName = name.includes(query);
-      const matchesFinishAndFeel = fFeel.includes(query);
-      const matchesFinish = finish.includes(query);
-      const matchesColorGroup = cGroup.includes(query);
-      const matchesSizeAndFormat = sFormat.includes(query);
-      const matchesThickness = thick.includes(query);
-      const matchesVisualLook = vLook.includes(query);
-      const matchesMaterialStyle = mStyle.includes(query);
-      const matchesApplication = apps.some(a => a.includes(query));
-      const matchesSlabFormat = formats.some(f => f.includes(query)) || name.includes(query);
-      const matchesCategory = category.includes(query);
-      const matchesOrigin = origin.includes(query);
 
-      if (!matchesName && 
-          !matchesFinishAndFeel && 
-          !matchesFinish && 
-          !matchesColorGroup && 
-          !matchesSizeAndFormat && 
-          !matchesThickness && 
-          !matchesVisualLook && 
-          !matchesMaterialStyle && 
-          !matchesApplication && 
-          !matchesSlabFormat &&
-          !matchesCategory &&
-          !matchesOrigin) {
+      // Combine every searchable field into one haystack. This is what makes
+      // compound/multi-word searches work even when the matching words live
+      // in different Airtable columns — e.g. "Anthracite Bocciardata" where
+      // Anthracite is the Color Group and Bocciardata is the Finish.
+      const haystack = [
+        name, fFeel, finish, cGroup, sFormat, thick, vLook, mStyle,
+        category, origin, ...apps, ...formats
+      ].join(" ");
+
+      // Require every word in the query to appear somewhere in the combined
+      // haystack — order and field don't matter, but every word must be found.
+      const queryWords = searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      const allWordsMatch = queryWords.every(word => haystack.includes(word));
+
+      if (!allWordsMatch) {
         return false;
       }
     }
@@ -554,8 +542,8 @@ export default function FeaturedCollections({
                       <Sparkles size={16} className="text-[#f39b34] animate-spin relative z-10" style={{ animationDuration: "2.5s" }} />
                     </div>
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-white">Loading catalog</p>
-                      <p className="text-[9px] font-mono text-white/35 uppercase tracking-widest">Fetching lot inventory from database...</p>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-white">Styles Loading</p>
+                      <p className="text-[9px] font-mono text-white/70 uppercase tracking-widest">Fetching lot inventory from database...</p>
                     </div>
                     <div className="ml-auto flex gap-1">
                       {[0,1,2].map(i => (
