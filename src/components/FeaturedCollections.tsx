@@ -543,7 +543,7 @@ export default function FeaturedCollections({
                     </div>
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-widest text-white">Styles Loading</p>
-                      <p className="text-[9px] font-mono text-white/70 uppercase tracking-widest">Fetching lot inventory from database...</p>
+                      <p className="text-[10px] font-mono text-[#D1CFC9] uppercase tracking-widest">Fetching lot inventory from database...</p>
                     </div>
                     <div className="ml-auto flex gap-1">
                       {[0,1,2].map(i => (
