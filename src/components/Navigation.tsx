@@ -90,11 +90,20 @@ export default function Navigation({ onBookClick, onHomeClick }: NavigationProps
 
           {/* Search — grows to fill space */}
           <div className="hidden lg:flex flex-1 items-center border border-neutral-200 bg-white px-3 py-1.5 min-w-0">
-            <Search size={11} className="text-[#f39b34] mr-2 shrink-0" />
+            <button
+              type="button"
+              onClick={() => submitSearch(localSearch)}
+              className="text-[#f39b34] mr-2 shrink-0 cursor-pointer hover:opacity-70 transition-opacity"
+              aria-label="Search"
+            >
+              <Search size={11} />
+            </button>
             <input
               type="text"
               id="tour-nav-search"
               placeholder="Search catalog..."
+              enterKeyHint="search"
+              onFocus={e => e.target.select()}
               value={localSearch}
               onChange={e => setLocalSearch(e.target.value)}
               onKeyDown={e => {
@@ -152,10 +161,19 @@ export default function Navigation({ onBookClick, onHomeClick }: NavigationProps
             <span>Filter</span>
           </button>
           <div className="flex-1 flex items-center border border-neutral-200 bg-white px-3 py-2 min-w-0 rounded-sm">
-            <Search size={11} className="text-[#f39b34] mr-2 shrink-0" />
+            <button
+              type="button"
+              onClick={() => submitSearch(localSearch)}
+              className="text-[#f39b34] mr-2 shrink-0 cursor-pointer hover:opacity-70 transition-opacity"
+              aria-label="Search"
+            >
+              <Search size={11} />
+            </button>
             <input
               type="text"
               placeholder="Search catalog..."
+              enterKeyHint="search"
+              onFocus={e => e.target.select()}
               value={localSearch}
               onChange={e => setLocalSearch(e.target.value)}
               onKeyDown={e => {
